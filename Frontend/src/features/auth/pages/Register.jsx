@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Store, User, Phone, Mail, Lock, ChevronRight } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { setError } from "../state/auth.slice";
 import { useAuth } from "../hooks/useAuth";
 import Button from "../../../components/ui/Button";
 import FormField from "../components/FormField";
@@ -9,6 +11,8 @@ import { useNavigate } from "react-router";
 const Register = () => {
   const { handleRegister } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const reduxError = useSelector((state) => state.auth.error);
 
   const [form, setForm] = useState({
     fullname: "",
@@ -28,6 +32,7 @@ const Register = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    if (reduxError) dispatch(setError(null));
   };
 
   const validate = () => {
@@ -54,9 +59,11 @@ const Register = () => {
       return;
     }
 
-    console.log("Registering:", form);
+    setErrors({});
+    dispatch(setError(null));
+    setIsSubmitting(true);
+
     try {
-      setIsSubmitting(true);
       await handleRegister({
         email: form.email,
         fullname: form.fullname,
@@ -67,7 +74,13 @@ const Register = () => {
 
       navigate("/");
     } catch (err) {
-      console.error(err);
+      const { field, message } = err?.response?.data ?? {};
+
+      if (field && message) {
+        setErrors({ [field]: message });
+      } else {
+        dispatch(setError(message || "Something went wrong"));
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -201,6 +214,13 @@ const Register = () => {
               </p>
             </div>
           </label>
+
+          {/* ── Global Redux Error Banner ── */}
+          {reduxError && (
+            <p role="alert" className="text-[11px] text-[var(--error)] -mt-1">
+              {reduxError}
+            </p>
+          )}
 
           {/* ── Submit Button ── */}
           <Button

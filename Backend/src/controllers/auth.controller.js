@@ -31,9 +31,13 @@ export const registerUser = async (req, res) => {
     });
 
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "Email or contact number already in use" });
+      const field =
+        existingUser.email === email ? "email" : "contact";
+      const message =
+        field === "email"
+          ? "This email is already in use."
+          : "This contact number is already in use.";
+      return res.status(400).json({ field, message });
     }
 
     const user = await userModel.create({
