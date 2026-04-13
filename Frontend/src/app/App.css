@@ -1,1 +1,85 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap");
+
+:root {
+  /* Surfaces */
+  --bg: #fbf9f6;               /* warm off-white canvas */
+  --card: #ffffff;             /* card surface */
+  --card-subtle: #f5f3f0;     /* subtle surface variant */
+
+  /* Text */
+  --text: #1b1c1a;             /* near-black */
+  --text-secondary: #4f453f;  /* warm muted */
+  --text-muted: #81756e;      /* quiet label */
+
+  /* Primary — espresso brown */
+  --primary: #26170c;
+  --primary-btn: #3d2b1f;
+  --primary-hover: #26170c;
+
+  /* Secondary */
+  --secondary: #5e5e5e;
+  --secondary-bg: #e4e2e2;
+
+  /* Borders */
+  --border: #d2c4bc;           /* ghost border */
+  --border-focus: #3d2b1f;    /* on focus */
+
+  /* Error */
+  --error: #ba1a1a;
+  --error-bg: #ffdad6;
+
+  /* Spacing scale */
+  --radius-card: 1rem;         /* rounded-xl = 12px */
+  --radius-input: 0.5rem;      /* rounded-lg  = 8px */
+}
+
+/* ─── Base ─────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Brand Typography ──────────────────────── */
+/* Manrope is used globally — no separate display class needed */
+
+/* ─── Register Card Entrance ───────────────── */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.register-card {
+  animation: card-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── Input focus transition ───────────────── */
+.input-field {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2.5px rgba(61, 43, 31, 0.08);
+}

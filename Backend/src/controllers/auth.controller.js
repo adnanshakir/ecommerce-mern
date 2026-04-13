@@ -45,7 +45,6 @@ export const registerUser = async (req, res) => {
     });
 
     await sendTokenResponse(user, res, "User registered successfully");
-
   } catch (error) {
     console.error("Error registering user:", error);
     res.status(500).json({ message: "Server error" });

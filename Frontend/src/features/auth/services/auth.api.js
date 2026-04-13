@@ -5,7 +5,13 @@ const authApi = axios.create({
   withCredentials: true,
 });
 
-export async function register({ email, password, contact, fullname }) {
+export async function register({
+  email,
+  password,
+  contact,
+  fullname,
+  isSeller,
+}) {
   const response = await authApi.post("/register", {
     email,
     password,
