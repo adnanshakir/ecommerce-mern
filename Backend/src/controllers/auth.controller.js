@@ -31,8 +31,7 @@ export const registerUser = async (req, res) => {
     });
 
     if (existingUser) {
-      const field =
-        existingUser.email === email ? "email" : "contact";
+      const field = existingUser.email === email ? "email" : "contact";
       const message =
         field === "email"
           ? "This email is already in use."
@@ -74,6 +73,32 @@ export const loginUser = async (req, res) => {
     await sendTokenResponse(user, res, "User logged in successfully");
   } catch (error) {
     console.error("Error logging in user:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const googleAuthCallback = async (req, res) => {
+  try {
+    const profile = req.user;
+    const email = profile.emails[0].value;
+
+    let user = await userModel.findOne({ email });
+
+    if (!user) {
+      user = await userModel.create({
+        email,
+        fullname: profile.displayName,
+        role: "buyer",
+      });
+    }
+
+    await sendTokenResponse(
+      user,
+      res,
+      "User logged in with Google successfully",
+    );
+  } catch (error) {
+    console.error("Error in Google auth callback:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
