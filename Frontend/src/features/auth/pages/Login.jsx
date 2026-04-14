@@ -5,6 +5,7 @@ import { setError } from "../state/auth.slice";
 import { useAuth } from "../hooks/useAuth";
 import Button from "../../../components/ui/Button";
 import FormField from "../components/FormField";
+import GoogleButton from "../../../components/ui/GoogleButton";
 import { useNavigate } from "react-router";
 
 /* ─── Login Page ──────────────────────────────────────── */
@@ -159,6 +160,18 @@ const Login = () => {
               </>
             )}
           </Button>
+
+          {/* ── Or Divider ── */}
+          <div className="flex items-center gap-3 my-1">
+            <div className="flex-1 h-px bg-[var(--border)]" />
+            <span className="text-[11px] text-[var(--text-muted)] font-normal">
+              or
+            </span>
+            <div className="flex-1 h-px bg-[var(--border)]" />
+          </div>
+
+          {/* ── Google OAuth ── */}
+          <GoogleButton />
         </form>
 
         {/* ── Divider ── */}

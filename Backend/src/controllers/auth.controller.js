@@ -88,6 +88,7 @@ export const googleAuthCallback = async (req, res) => {
       user = await userModel.create({
         email,
         fullname: profile.displayName,
+        googleId: profile.id,
         role: "buyer",
       });
     }

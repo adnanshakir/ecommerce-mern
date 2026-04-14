@@ -5,6 +5,7 @@ import { setError } from "../state/auth.slice";
 import { useAuth } from "../hooks/useAuth";
 import Button from "../../../components/ui/Button";
 import FormField from "../components/FormField";
+import GoogleButton from "../../../components/ui/GoogleButton";
 import { useNavigate } from "react-router";
 
 /* ─── Register Page ───────────────────────────────────── */
@@ -33,18 +34,26 @@ const Register = () => {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const validate = () => {
+  const validate = (isGoogle = false) => {
     const newErrors = {};
+
     if (!form.fullname.trim()) newErrors.fullname = "Full name is required.";
-    if (!form.contact.trim()) newErrors.contact = "Contact number is required.";
-    else if (!/^\+?[\d\s\-()]{7,15}$/.test(form.contact))
-      newErrors.contact = "Enter a valid contact number.";
+
+    if (!isGoogle) {
+      if (!form.contact.trim())
+        newErrors.contact = "Contact number is required.";
+      else if (!/^\+?[\d\s\-()]{7,15}$/.test(form.contact))
+        newErrors.contact = "Enter a valid contact number.";
+
+      if (!form.password) newErrors.password = "Password is required.";
+      else if (form.password.length < 8)
+        newErrors.password = "Password must be at least 8 characters.";
+    }
+
     if (!form.email.trim()) newErrors.email = "Email is required.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       newErrors.email = "Enter a valid email address.";
-    if (!form.password) newErrors.password = "Password is required.";
-    else if (form.password.length < 8)
-      newErrors.password = "Password must be at least 8 characters.";
+
     return newErrors;
   };
 
@@ -251,6 +260,18 @@ const Register = () => {
               </>
             )}
           </Button>
+
+          {/* ── Or Divider ── */}
+          <div className="flex items-center gap-3 my-1">
+            <div className="flex-1 h-px bg-[var(--border)]" />
+            <span className="text-[11px] text-[var(--text-muted)] font-normal">
+              or
+            </span>
+            <div className="flex-1 h-px bg-[var(--border)]" />
+          </div>
+
+          {/* ── Google OAuth ── */}
+          <GoogleButton />
         </form>
 
         {/* ── Divider ── */}
