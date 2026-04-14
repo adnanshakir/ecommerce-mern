@@ -2,14 +2,23 @@ import jwt from "jsonwebtoken";
 import userModel from "../models/user.model.js";
 import { config } from "../config/config.js";
 
-async function sendTokenResponse(user, res, message) {
+async function sendTokenResponse(user, res, message, redirectUrl = null) {
   const token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
     expiresIn: "7d",
   });
 
-  res.cookie("token", token);
+  // cookie config (important for auth)
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+  });
 
-  res.status(200).json({
+  if (redirectUrl) {
+    return res.redirect(redirectUrl);
+  }
+
+  return res.status(200).json({
     message,
     success: true,
     user: {
@@ -97,6 +106,7 @@ export const googleAuthCallback = async (req, res) => {
       user,
       res,
       "User logged in with Google successfully",
+      "http://localhost:5173/",
     );
   } catch (error) {
     console.error("Error in Google auth callback:", error);
