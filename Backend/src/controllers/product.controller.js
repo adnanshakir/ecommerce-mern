@@ -36,3 +36,23 @@ export async function createProduct(req, res) {
     });
   }
 }
+
+export async function getSellerProducts(req, res) {
+  try {
+    const sellerId = req.user._id;
+    const products = await productModel.find({ seller: sellerId });
+
+    res.status(200).json({
+      message: "Products fetched successfully",
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.error("Error fetching seller products:", error);
+
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+}
