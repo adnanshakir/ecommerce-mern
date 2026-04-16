@@ -7,7 +7,6 @@ async function sendTokenResponse(user, res, message, redirectUrl = null) {
     expiresIn: "7d",
   });
 
-  // cookie config (important for auth)
   res.cookie("token", token, {
     httpOnly: true,
     sameSite: "lax",
@@ -110,6 +109,6 @@ export const googleAuthCallback = async (req, res) => {
     );
   } catch (error) {
     console.error("Error in Google auth callback:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: error.message });
   }
 };

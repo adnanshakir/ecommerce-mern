@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
+import { config } from "../config/config.js";
 import {
   validateRegisterUser,
   validateLoginUser,
@@ -43,7 +44,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/login",
+    failureRedirect: config.NODE_ENV === "development" ? "http://localhost:5173/login" : "/login",
     session: false,
   }),
   googleAuthCallback,
