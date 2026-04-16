@@ -3,7 +3,7 @@ import { Store, Mail, Lock, ChevronRight } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { setError } from "../state/auth.slice";
 import { useAuth } from "../hooks/useAuth";
-import Button from "../../../components/ui/Button";
+import { Button } from "../../../components/ui/Button";
 import FormField from "../components/FormField";
 import GoogleButton from "../../../components/ui/GoogleButton";
 import { useNavigate } from "react-router";
@@ -125,7 +125,6 @@ const Login = () => {
           {/* ── Submit Button ── */}
           <Button
             type="submit"
-            variant="primary"
             disabled={isSubmitting}
             className="mt-1 py-2.5 text-sm font-medium tracking-normal"
           >
