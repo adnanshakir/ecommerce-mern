@@ -58,15 +58,17 @@ export const registerUser = async (req, res) => {
     await sendTokenResponse(user, res, "User registered successfully");
   } catch (error) {
     console.error("Error registering user:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
+  console.log(email, password)
+
   try {
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -81,7 +83,7 @@ export const loginUser = async (req, res) => {
     await sendTokenResponse(user, res, "User logged in successfully");
   } catch (error) {
     console.error("Error logging in user:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

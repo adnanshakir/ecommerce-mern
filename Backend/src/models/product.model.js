@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema(
       },
       currency: {
         type: String,
-        deafault: "INR",
+        default: "INR",
         enum: ["USD", "EUR", "GBP", "INR", "JPY"],
       },
     },
@@ -26,12 +26,14 @@ const productSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    images: {
-      url: {
-        type: String,
-        required: true,
+    images: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
       },
-    },
+    ],
   },
   { timestamps: true },
 );
