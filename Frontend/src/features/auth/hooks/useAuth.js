@@ -43,5 +43,24 @@ export const useAuth = () => {
     }
   }
 
-  return { handleRegister, handleLogin };
+  async function handleGetMe() {
+    try {
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+
+      const data = await getMe();
+
+      dispatch(setUser(data.user));
+      return data.user;
+    } catch (error) {
+      dispatch(
+        setError(error?.response?.data?.message || error.message)
+      );
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+
+  return { handleRegister, handleLogin, handleGetMe };
 };

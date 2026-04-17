@@ -9,7 +9,9 @@ import {
   registerUser,
   loginUser,
   googleAuthCallback,
+  getMe,
 } from "../controllers/auth.controller.js";
+import { authenticateUser } from "../middleware/auth.middleware.js";
 const router = Router();
 
 /*
@@ -44,10 +46,20 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: config.NODE_ENV === "development" ? "http://localhost:5173/login" : "/login",
+    failureRedirect:
+      config.NODE_ENV === "development"
+        ? "http://localhost:5173/login"
+        : "/login",
     session: false,
   }),
   googleAuthCallback,
 );
+
+/*
+ * @description Get current authenticated user
+ * @route GET /api/auth/me
+ * @access Private
+ */
+router.get("/me", authenticateUser, getMe);
 
 export default router;

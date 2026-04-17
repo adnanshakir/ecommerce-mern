@@ -114,3 +114,24 @@ export const googleAuthCallback = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getMe = async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.status(200).json({
+      message: "User fetched successfully",
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        contact: user.contact,
+        fullname: user.fullname,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
