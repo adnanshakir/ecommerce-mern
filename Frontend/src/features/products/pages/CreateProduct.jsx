@@ -49,20 +49,20 @@ const FieldError = ({ id, message }) =>
   ) : null;
 
 const PageHeader = () => (
- <header className="mb-6 w-full flex flex-col items-center text-center">
-  <div className="flex items-center gap-2.5">
-    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--primary-btn)] shrink-0">
-      <Store size={16} strokeWidth={2} className="text-[var(--card)]" />
+  <header className="mb-6 w-full flex flex-col items-center text-center">
+    <div className="flex items-center gap-2.5">
+      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--primary-btn)] shrink-0">
+        <Store size={16} strokeWidth={2} className="text-[var(--card)]" />
+      </div>
+      <span className="text-lg font-bold tracking-widest uppercase text-[var(--text)] leading-none">
+        SNITCH
+      </span>
     </div>
-    <span className="text-lg font-bold tracking-widest uppercase text-[var(--text)] leading-none">
-      SNITCH
-    </span>
-  </div>
 
-  <p className="mt-1.5 text-[12px] text-[var(--text-muted)] font-normal tracking-normal">
-    Manage your catalog and publish new items.
-  </p>
-</header>
+    <p className="mt-1.5 text-[12px] text-[var(--text-muted)] font-normal tracking-normal">
+      Manage your catalog and publish new items.
+    </p>
+  </header>
 );
 
 /* ─── Create Product Page ──────────────────────────────── */
@@ -144,8 +144,8 @@ const CreateProduct = () => {
       const formData = new FormData();
       formData.append("name", form.name.trim());
       formData.append("description", form.description.trim());
-      formData.append("price", form.price);
-      formData.append("currency", form.currency);
+      formData.append("priceAmount", form.price);
+      formData.append("priceCurrency", form.currency);
       images.forEach((img) => formData.append("images", img));
 
       await handleCreateProduct(formData);
