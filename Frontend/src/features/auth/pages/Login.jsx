@@ -48,8 +48,16 @@ const Login = () => {
     setIsSubmitting(true);
 
     try {
-      await handleLogin({ email: form.email, password: form.password });
-      navigate("/");
+      const user = await handleLogin({
+        email: form.email,
+        password: form.password,
+      });
+
+      if (user.role === "seller") {
+        navigate("/seller/dashboard");
+      } else if (user.role === "buyer") {
+        navigate("/");
+      }
     } catch (err) {
       // Backend login errors are plain { message } — map to field when possible
       const { field, message } = err?.response?.data ?? {};
