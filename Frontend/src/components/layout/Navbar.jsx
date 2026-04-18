@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Menu, ShoppingBag, X } from "lucide-react";
 
 const Navbar = () => {
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   const user = useSelector((state) => state.auth.user);
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -28,7 +30,8 @@ const Navbar = () => {
     if (scrolled) setMobileMenuOpen(false);
   }, [scrolled]);
 
-  const isActive = scrolled || (isDesktop && hovered) || mobileMenuOpen;
+  const isActive =
+    !isHome || scrolled || (isDesktop && hovered) || mobileMenuOpen;
 
   return (
     <nav
@@ -38,12 +41,11 @@ const Navbar = () => {
       onMouseLeave={() => {
         if (isDesktop) setHovered(false);
       }}
-      className={[
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+      className={`fixed top-0 w-full z-50 transition-colors duration-200 ${
         isActive
-          ? "bg-[var(--card)] text-[var(--text)] backdrop-blur"
-          : "bg-transparent text-white",
-      ].join(" ")}
+          ? "bg-[var(--card)] text-[var(--text)]"
+          : "bg-transparent text-white"
+      }`}
     >
       <div className="mx-auto w-full max-w-7xl px-4 py-5 md:py-6 sm:px-6">
         <div className="grid grid-cols-3 items-center">
@@ -90,10 +92,10 @@ const Navbar = () => {
                   asChild
                   variant="ghost"
                   className={
-                      isActive
-                        ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
-                        : "text-white hover:bg-white/10 hover:text-white"
-                    }
+                    isActive
+                      ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                      : "text-white hover:bg-white/10 hover:text-white"
+                  }
                 >
                   <Link to="/seller/dashboard">Dashboard</Link>
                 </Button>
@@ -153,7 +155,7 @@ const Navbar = () => {
             />
 
             {/* menu */}
-            <div className="md:hidden absolute top-full left-0 w-full bg-[var(--card)] border-t border-[var(--border)] p-4 z-50 animate-in slide-in-from-top-2 duration-200">
+            <div className="md:hidden absolute top-full left-0 w-full bg-[var(--card)] border-t border-[var(--border)] p-4 z-50">
               {user ? (
                 <Button
                   asChild

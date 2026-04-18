@@ -6,6 +6,7 @@ const Protected = ({ children, role = "buyer" }) => {
   const user = useSelector((state) => state.auth.user);
   const loading = useSelector((state) => state.auth.loading);
 
+  console.log("USER ROLE:", user?.role);
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -14,9 +15,10 @@ const Protected = ({ children, role = "buyer" }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (user.role !== role) {
+  if (user.role?.toLowerCase().trim() !== role.toLowerCase()) {
     return <Navigate to="/" replace />;
   }
+
 
   return children;
 };

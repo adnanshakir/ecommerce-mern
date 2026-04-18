@@ -49,25 +49,21 @@ const Home = () => {
 
       <section
         id="products"
-        className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-16"
+        className="mx-auto w-full max-w-7xl px-4 py-20 text-center sm:px-6"
       >
-        <h2 className="text-xl font-medium text-[var(--text)]">Latest Drops</h2>
+        <h2 className="mb-10 text-2xl font-medium tracking-tight text-[var(--text)]">Latest Drops</h2>
 
         {products?.length ? (
-          <div
-            className={products.length < 4 ? "mx-auto mt-8 max-w-6xl" : "mt-8"}
-          >
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
-              {products.map((product) => (
-                <Link
-                  key={product._id}
-                  to={`/product/${product._id}`}
-                  className="block"
-                >
-                  <ProductCard product={product} />
-                </Link>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {products.map((product) => (
+              <Link
+                key={product._id}
+                to={`/product/${product._id}`}
+                className="block"
+              >
+                <ProductCard product={product} />
+              </Link>
+            ))}
           </div>
         ) : (
           <div className="mt-10 flex flex-col items-center justify-center space-y-3 text-center">

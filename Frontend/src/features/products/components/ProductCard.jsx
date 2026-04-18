@@ -13,7 +13,7 @@ const ProductCard = ({ product, onClick }) => {
       onClick={onClick}
       aria-label={`View ${name}`}
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-[var(--card-subtle)]">
+      <div className="relative aspect-3/4 object-center overflow-hidden bg-[var(--card-subtle)]">
         {primaryImage ? (
           <>
             <img
@@ -39,8 +39,8 @@ const ProductCard = ({ product, onClick }) => {
       </div>
 
       <CardContent className="px-0 pt-3 pb-0 space-y-0.5">
-        <p className="truncate text-sm text-[var(--text)]">{name}</p>
-        <p className="text-sm font-medium text-[var(--text)]">₹{amount}</p>
+        <p className="truncate text-sm font-medium text-[var(--text)]">{name}</p>
+        <p className="text-sm text-[var(--text)]">₹{amount}</p>
       </CardContent>
     </Card>
   );
