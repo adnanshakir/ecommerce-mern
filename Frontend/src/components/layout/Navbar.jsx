@@ -67,17 +67,6 @@ const Navbar = () => {
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </Button>
-
-            <div className="hidden md:flex items-center gap-2 text-sm">
-              {user && (
-                <Link
-                  to="/seller/dashboard"
-                  className={isActive ? "text-[var(--text)]" : "text-white"}
-                >
-                  Dashboard
-                </Link>
-              )}
-            </div>
           </div>
 
           {/* CENTER */}
@@ -99,8 +88,12 @@ const Navbar = () => {
               {user ? (
                 <Button
                   asChild
-                  variant="outline"
-                  className="border-[var(--border)] bg-transparent text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                  variant="ghost"
+                  className={
+                      isActive
+                        ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                        : "text-white hover:bg-white/10 hover:text-white"
+                    }
                 >
                   <Link to="/seller/dashboard">Dashboard</Link>
                 </Button>

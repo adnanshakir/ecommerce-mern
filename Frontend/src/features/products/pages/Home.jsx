@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useProduct } from "../hooks/useProduct";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "../components/ProductCard";
@@ -58,7 +59,13 @@ const Home = () => {
           >
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
               {products.map((product) => (
-                <ProductCard key={product._id} product={product} />
+                <Link
+                  key={product._id}
+                  to={`/product/${product._id}`}
+                  className="block"
+                >
+                  <ProductCard product={product} />
+                </Link>
               ))}
             </div>
           </div>
