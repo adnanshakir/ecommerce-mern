@@ -1,11 +1,11 @@
 import React, { use, useEffect } from "react";
 import { useParams } from "react-router";
-import { userProduct } from "../hooks/useProduct";
+import { useProduct } from "../hooks/useProduct";
 
 const ProductDetail = () => {
   const { productId } = useParams();
 
-  const { handleGetProductDetails } = userProduct();
+  const { handleGetProductDetails } = useProduct();
 
   useEffect(() => {
     handleGetProductDetails(productId)

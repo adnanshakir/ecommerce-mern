@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { p } from "node_modules/react-router/dist/development/index-react-server-client-WSaoxloq.mjs";
 
 const productSlice = createSlice({
   name: "product",
@@ -22,6 +21,6 @@ const productSlice = createSlice({
   },
 });
 
-export const { setProduct, setAllProducts } = productSlice.actions;
+export const { setProduct, setAllProducts, setProductDetails } = productSlice.actions;
 
 export default productSlice.reducer;
