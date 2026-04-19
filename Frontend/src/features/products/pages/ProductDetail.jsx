@@ -194,9 +194,6 @@ const ProductDetail = () => {
                 >
                   <Plus size={14} />
                 </Button>
-                <div className="pt-4">
-                  <ProductHighlights />
-                </div>{" "}
               </div>
             </div>
 

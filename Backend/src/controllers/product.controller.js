@@ -97,3 +97,62 @@ export async function getProductDetails(req, res) {
     });
   }
 }
+
+export async function addProductVariant(req, res) {
+  try {
+    const { id } = req.params;
+    const product = await productModel.findOne({ _id: id, seller: req.user._id });
+
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found", success: false });
+    }
+
+    const files = req.files;
+    const images = [];
+
+    if (files && files.length !== 0) {
+      (
+        await Promise.all(
+          files.map(async (file) => {
+            const image = await uploadFile({
+              buffer: file.buffer,
+              fileName: file.originalname,
+              folder: "E-commerce",
+            });
+            return image;
+          }),
+        )
+      ).map((img) => images.push(img));
+    }
+
+    const { attributes, priceAmount, priceCurrency, stock } = req.body;
+
+    console.log(product, images, priceAmount, stock, attributes)
+
+    // const newVariant = {
+    //   attributes,
+    //   price: {
+    //     amount: priceAmount,
+    //     currency: priceCurrency || "INR",
+    //   },
+    //   stock,
+    //   images,
+    // };
+
+    // product.varients.push(newVariant);
+    // await product.save();
+
+    // res.status(201).json({
+    //   message: "Variant added successfully",
+    //   success: true,
+    //   variant: newVariant,
+    // });
+  } catch (error) {
+    console.error("Error adding product variant:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+}
