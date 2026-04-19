@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import ProductHighlights from "../components/ProductHighlights";
 
 const ProductDetail = () => {
   const { productId } = useParams();
@@ -193,6 +194,9 @@ const ProductDetail = () => {
                 >
                   <Plus size={14} />
                 </Button>
+                <div className="pt-4">
+                  <ProductHighlights />
+                </div>{" "}
               </div>
             </div>
 
@@ -202,6 +206,11 @@ const ProductDetail = () => {
                 Add to cart
               </Button>
               <Button variant="outline">Buy now</Button>
+            </div>
+
+            {/* INFO */}
+            <div className="pt-4">
+              <ProductHighlights />
             </div>
           </div>
         </div>
