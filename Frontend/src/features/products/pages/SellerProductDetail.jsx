@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { useProduct } from "../hooks/useProduct";
 import { Button } from "@/components/ui/Button";
 import ProductBaseInfo from "../components/variants/ProductBaseInfo";
 import VariantCard from "../components/variants/VariantCard";
+import VariantPreview from "../components/variants/VariantPreview";
 import {
   createVariant,
   formatVariantsPayload,
@@ -15,21 +16,26 @@ const SellerProductDetail = () => {
   const { handleGetProductDetails } = useProduct();
   const product = useSelector((state) => state.product.productDetails);
   const [variants, setVariants] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [viewMode, setViewMode] = useState("edit");
+  const initializedRef = useRef(false);
 
   const baseImages = useMemo(() => product?.images || [], [product]);
   const basePriceAmount = product?.price?.amount ?? 0;
   const baseCurrency = product?.price?.currency || "INR";
 
-  const initialVariants = useMemo(() => {
-    if (!product?.varients?.length) return [];
+  const mappedVariants = useMemo(() => {
+    const sourceVariants = product?.variants ?? product?.varients;
+    if (!sourceVariants?.length) return [];
 
-    return product.varients.map((variant) => ({
+    return sourceVariants.map((variant) => ({
       images: [],
       initialImages: variant.images || [],
       stock: variant.stock ?? 0,
       price: {
         amount: variant?.price?.amount ? String(variant.price.amount) : "",
-        currency: variant?.price?.currency || product.price.currency,
+        currency: variant?.price?.currency || product?.price?.currency || "INR",
       },
       attributes: Object.fromEntries(
         Object.entries(variant?.attributes || {}).map(([k, v]) => [k, v ?? ""]),
@@ -43,11 +49,26 @@ const SellerProductDetail = () => {
     handleGetProductDetails(productId).catch((error) => {
       console.error("Failed to fetch product details", error);
     });
-  }, [handleGetProductDetails, productId]);
+  }, [productId]);
 
   useEffect(() => {
-    if (initialVariants.length && variants.length === 0) setVariants(initialVariants);
-  }, [initialVariants]);
+    initializedRef.current = false;
+    setVariants([]);
+    setSaved(false);
+    setViewMode("edit");
+  }, [productId]);
+
+  useEffect(() => {
+    if (!product || initializedRef.current) return;
+
+    if (mappedVariants.length) {
+      setVariants(mappedVariants);
+    } else {
+      setVariants([createVariant(product?.price?.currency || "INR")]);
+    }
+
+    initializedRef.current = true;
+  }, [mappedVariants, product]);
 
   const updateVariant = (index, updater) => {
     setVariants((prev) => prev.map((v, i) => (i === index ? updater(v) : v)));
@@ -61,12 +82,30 @@ const SellerProductDetail = () => {
     setVariants((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!product) return;
 
-    console.log(
-      formatVariantsPayload(variants, baseImages, basePriceAmount, baseCurrency),
-    );
+    try {
+      setSaving(true);
+      setSaved(false);
+
+      const payload = formatVariantsPayload(
+        variants,
+        baseImages,
+        basePriceAmount,
+        baseCurrency,
+      );
+
+      console.log(payload);
+      await new Promise((res) => setTimeout(res, 800));
+      setSaved(true);
+      setViewMode("preview");
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!product) {
@@ -80,27 +119,28 @@ const SellerProductDetail = () => {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--bg)] px-4 py-8 sm:px-6">
-      <div className="mx-auto max-w-7xl space-y-8">
-        <div className="grid items-start gap-8 lg:grid-cols-[320px_1fr]">
-          <ProductBaseInfo
-            product={product}
-            baseCurrency={baseCurrency}
-            basePrice={basePriceAmount}
-            baseImages={baseImages}
-          />
+    <main className="min-h-screen bg-[var(--bg)]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-2">
+        <ProductBaseInfo
+          product={product}
+          baseCurrency={baseCurrency}
+          basePrice={basePriceAmount}
+          baseImages={baseImages}
+        />
 
-          <section className="mt-10 space-y-6 lg:mt-0">
+        <section className="space-y-6">
+          {viewMode === "edit" ? (
+            <>
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-base font-semibold text-[var(--text)]">Variants</h2>
-              <Button type="button" onClick={handleAddVariant}>
+              <Button type="button" variant="outline" onClick={handleAddVariant}>
                 Add Variant
               </Button>
             </div>
 
             {variants.length === 0 ? (
               <p className="text-sm text-[var(--text-muted)]">
-                No variants added yet.
+                No variants yet. Add one to start.
               </p>
             ) : (
               variants.map((variant, index) => (
@@ -118,12 +158,32 @@ const SellerProductDetail = () => {
             )}
 
             <div className="pt-2">
-              <Button type="button" onClick={handleSubmit}>
-                Save Variants
+              <Button type="button" onClick={handleSubmit} disabled={saving}>
+                {saving ? "Saving..." : saved ? "Saved ✓" : "Save Variants"}
               </Button>
             </div>
-          </section>
-        </div>
+            </>
+          ) : (
+            <>
+              <VariantPreview variants={variants} baseCurrency={baseCurrency} />
+
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setViewMode("edit")}>
+                  Edit Variants
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    handleAddVariant();
+                    setViewMode("edit");
+                  }}
+                >
+                  Add More
+                </Button>
+              </div>
+            </>
+          )}
+        </section>
       </div>
     </main>
   );

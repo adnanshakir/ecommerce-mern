@@ -9,7 +9,6 @@ import ProductCard from "../components/ProductCard";
 
 const SKELETON_COUNT = 8;
 const CREATE_PRODUCT_PATH = "/seller/create-product";
-const SELLER_PRODUCT_DETAIL_PATH = "/seller/product";
 
 const Dashboard = () => {
   const { handleGetSellerProducts } = useProduct();
@@ -86,11 +85,13 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-            onClick={() => navigate(SELLER_PRODUCT_DETAIL_PATH)}
-            >
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {sellerProducts.map((product) => (
-                <ProductCard key={product._id} product={product} />
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  onClick={() => navigate(`/seller/product/${product._id}`)}
+                />
               ))}
             </div>
           )}

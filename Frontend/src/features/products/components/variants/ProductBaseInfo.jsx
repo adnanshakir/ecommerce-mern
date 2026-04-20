@@ -2,13 +2,13 @@ const ProductBaseInfo = ({ product, baseCurrency, basePrice, baseImages }) => {
   const previewImage = baseImages[0]?.url || "";
 
   return (
-    <section className="space-y-4">
-      <div className="aspect-[4/5] border border-[var(--border)] bg-[var(--card-subtle)]">
+    <section className="space-y-4 max-w-md w-full">
+      <div className="w-full max-h-[500px] overflow-hidden border border-[var(--border)] bg-[var(--card-subtle)]">
         {previewImage ? (
           <img
             src={previewImage}
             alt={product.name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-xs text-[var(--text-muted)]">
