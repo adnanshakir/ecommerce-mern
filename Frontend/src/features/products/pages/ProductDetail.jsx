@@ -21,10 +21,18 @@ const ProductDetail = () => {
   const product = useSelector((state) => state.product.productDetails);
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState("M");
 
-  const images = useMemo(() => product?.images || [], [product]);
+  const selectedVariant = product?.variants?.[selectedVariantIndex];
+  const displayImages =
+    selectedVariant?.images?.length
+      ? selectedVariant.images
+      : product?.images || [];
+  const displayPrice = selectedVariant?.price?.amount ?? product?.price?.amount ?? 0;
+
+  const images = useMemo(() => displayImages || [], [displayImages]);
   const activeImageUrl = images[activeIndex]?.url;
 
   const setPrevImage = () => {
@@ -45,8 +53,25 @@ const ProductDetail = () => {
 
   useEffect(() => {
     setActiveIndex(0);
+    setSelectedVariantIndex(0);
     setQuantity(1);
   }, [productId]);
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [selectedVariantIndex]);
+
+  useEffect(() => {
+    const variantCount = product?.variants?.length ?? 0;
+    if (!variantCount) {
+      setSelectedVariantIndex(0);
+      return;
+    }
+
+    if (selectedVariantIndex > variantCount - 1) {
+      setSelectedVariantIndex(0);
+    }
+  }, [product?.variants, selectedVariantIndex]);
 
   if (!product) {
     return (
@@ -60,7 +85,7 @@ const ProductDetail = () => {
     );
   }
 
-  const amount = product?.price?.amount ?? product?.price ?? 0;
+  const amount = displayPrice;
 
   return (
     <main className="min-h-screen bg-[var(--bg)]">
@@ -143,6 +168,38 @@ const ProductDetail = () => {
             </h1>
 
             <p className="text-xl text-[var(--text)]">₹{amount}</p>
+
+            {product?.variants?.length > 0 && (
+              <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+                {product.variants.map((variant, index) => {
+                  const img = variant?.images?.[0]?.url;
+
+                  return (
+                    <button
+                      key={variant?._id || index}
+                      type="button"
+                      onClick={() => setSelectedVariantIndex(index)}
+                      className={`border p-1 transition ${
+                        selectedVariantIndex === index
+                          ? "border-black"
+                          : "border-gray-300"
+                      }`}
+                      aria-label={`Select variant ${index + 1}`}
+                    >
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={`Variant ${index + 1}`}
+                          className="h-12 w-12 object-cover"
+                        />
+                      ) : (
+                        <div className="h-12 w-12 bg-gray-200" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             <p className="text-sm leading-relaxed text-[var(--text-muted)]">
               {product.description}
