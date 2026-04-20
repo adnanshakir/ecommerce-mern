@@ -101,11 +101,15 @@ export async function getProductDetails(req, res) {
 export async function addProductVariant(req, res) {
   try {
     const { id } = req.params;
-    const product = await productModel.findOne({ _id: id, seller: req.user._id });
-
+    const product = await productModel.findOne({
+      _id: id,
+      seller: req.user._id,
+    });
 
     if (!product) {
-      return res.status(404).json({ message: "Product not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "Product not found", success: false });
     }
 
     const files = req.files;
@@ -126,28 +130,31 @@ export async function addProductVariant(req, res) {
       ).map((img) => images.push(img));
     }
 
-    const { attributes, priceAmount, priceCurrency, stock } = req.body;
+    const { priceAmount, priceCurrency, stock } = req.body;
+    const attributes = req.body.attributes
+      ? JSON.parse(req.body.attributes)
+      : {};
 
-    console.log(product, images, priceAmount, stock, attributes)
+    console.log(product, images, priceAmount, stock, attributes);
 
-    // const newVariant = {
-    //   attributes,
-    //   price: {
-    //     amount: priceAmount,
-    //     currency: priceCurrency || "INR",
-    //   },
-    //   stock,
-    //   images,
-    // };
+    const newVariant = {
+     attributes: attributes,
+      price: {
+        amount: priceAmount,
+        currency: priceCurrency || product.price.currency || "INR",
+      },
+      stock,
+      images,
+    };
 
-    // product.varients.push(newVariant);
-    // await product.save();
+    product.varients.push(newVariant);
+    await product.save();
 
-    // res.status(201).json({
-    //   message: "Variant added successfully",
-    //   success: true,
-    //   variant: newVariant,
-    // });
+    res.status(201).json({
+      message: "Variant added successfully",
+      success: true,
+      variant: newVariant,
+    });
   } catch (error) {
     console.error("Error adding product variant:", error);
     res.status(500).json({

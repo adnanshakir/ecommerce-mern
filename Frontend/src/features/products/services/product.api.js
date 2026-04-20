@@ -25,19 +25,19 @@ export async function getProductDetails(productId) {
   return response.data;
 }
 
-// export async function addProductVariant(productId, newProductVariant) {
-//   const formData = new FormData();
+export async function addProductVariant(productId, newProductVariant) {
+  const formData = new FormData();
 
-//   newProductVariant.images.forEach((img) => {
-//     formData.append("images", img.file);
-//   });
+  newProductVariant.images.forEach((img) => {
+    formData.append("images", img.file);
+  });
 
-//   formData.append("priceAmount", newProductVariant.price.amount);
-//   formData.append("priceCurrency", newProductVariant.price.currency);
-//   formData.append("stock", newProductVariant.stock);
-//   formData.append("attributes", JSON.stringify(newProductVariant.attributes));
+  formData.append("priceCurrency", newProductVariant.price.currency);
+  formData.append("stock", String(newProductVariant.stock));
+  formData.append("priceAmount", String(newProductVariant.price.amount));
+  formData.append("attributes", JSON.stringify(newProductVariant.attributes));
 
-//   const response = await productApi.post(`/${productId}/variants`, formData)
+  const response = await productApi.post(`/${productId}/variants`, formData);
 
-//   return response.data;
-// }
+  return response.data;
+}

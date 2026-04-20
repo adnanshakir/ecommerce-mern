@@ -13,7 +13,7 @@ import {
 
 const SellerProductDetail = () => {
   const { productId } = useParams();
-  const { handleGetProductDetails } = useProduct();
+  const { handleGetProductDetails, handleAddProductVariant } = useProduct();
   const product = useSelector((state) => state.product.productDetails);
   const [variants, setVariants] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -96,11 +96,12 @@ const SellerProductDetail = () => {
         baseCurrency,
       );
 
-      console.log(payload);
-      await new Promise((res) => setTimeout(res, 800));
+      for (const variant of payload) {
+        await handleAddProductVariant(productId, variant);
+      }
+
       setSaved(true);
       setViewMode("preview");
-      setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -131,37 +132,43 @@ const SellerProductDetail = () => {
         <section className="space-y-6">
           {viewMode === "edit" ? (
             <>
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-base font-semibold text-[var(--text)]">Variants</h2>
-              <Button type="button" variant="outline" onClick={handleAddVariant}>
-                Add Variant
-              </Button>
-            </div>
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-base font-semibold text-[var(--text)]">
+                  Variants
+                </h2>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddVariant}
+                >
+                  Add Variant
+                </Button>
+              </div>
 
-            {variants.length === 0 ? (
-              <p className="text-sm text-[var(--text-muted)]">
-                No variants yet. Add one to start.
-              </p>
-            ) : (
-              variants.map((variant, index) => (
-                <VariantCard
-                  key={`variant-${index}`}
-                  variant={variant}
-                  index={index}
-                  onChange={updateVariant}
-                  onRemove={removeVariant}
-                  baseImages={baseImages}
-                  basePrice={basePriceAmount}
-                  baseCurrency={baseCurrency}
-                />
-              ))
-            )}
+              {variants.length === 0 ? (
+                <p className="text-sm text-[var(--text-muted)]">
+                  No variants yet. Add one to start.
+                </p>
+              ) : (
+                variants.map((variant, index) => (
+                  <VariantCard
+                    key={`variant-${index}`}
+                    variant={variant}
+                    index={index}
+                    onChange={updateVariant}
+                    onRemove={removeVariant}
+                    baseImages={baseImages}
+                    basePrice={basePriceAmount}
+                    baseCurrency={baseCurrency}
+                  />
+                ))
+              )}
 
-            <div className="pt-2">
-              <Button type="button" onClick={handleSubmit} disabled={saving}>
-                {saving ? "Saving..." : saved ? "Saved ✓" : "Save Variants"}
-              </Button>
-            </div>
+              <div className="pt-2">
+                <Button type="button" onClick={handleSubmit} disabled={saving}>
+                  {saving ? "Saving..." : saved ? "Saved ✓" : "Save Variants"}
+                </Button>
+              </div>
             </>
           ) : (
             <>
