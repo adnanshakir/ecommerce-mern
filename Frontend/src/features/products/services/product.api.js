@@ -29,8 +29,12 @@ export async function addProductVariant(productId, newProductVariant) {
   const formData = new FormData();
 
   newProductVariant.images.forEach((img) => {
+  if (img instanceof File) {
+    formData.append("images", img);
+  } else if (img?.file) {
     formData.append("images", img.file);
-  });
+  }
+});
 
   formData.append("priceCurrency", newProductVariant.price.currency);
   formData.append("stock", String(newProductVariant.stock));

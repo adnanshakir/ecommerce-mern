@@ -138,9 +138,9 @@ export async function addProductVariant(req, res) {
     console.log(product, images, priceAmount, stock, attributes);
 
     const newVariant = {
-     attributes: attributes,
+      attributes: attributes,
       price: {
-        amount: priceAmount,
+        amount: priceAmount || product.price.amount,
         currency: priceCurrency || product.price.currency || "INR",
       },
       stock,
