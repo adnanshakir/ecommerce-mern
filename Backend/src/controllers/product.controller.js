@@ -147,7 +147,7 @@ export async function addProductVariant(req, res) {
       images,
     };
 
-    product.varients.push(newVariant);
+    product.variants.push(newVariant);
     await product.save();
 
     res.status(201).json({

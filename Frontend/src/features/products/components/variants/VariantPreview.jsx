@@ -1,3 +1,5 @@
+import VariantCard from "./VariantCard";
+
 const filePreviewUrlCache = new WeakMap();
 
 const getFilePreviewUrl = (file) => {
@@ -31,58 +33,117 @@ const getPreviewImage = (variant) => {
   return "";
 };
 
-const VariantPreviewRow = ({ variant, index, baseCurrency }) => {
+const VariantPreviewRow = ({
+  variant,
+  index,
+  baseCurrency,
+  isOpen,
+  onToggle,
+  onRemove,
+  children,
+}) => {
   const image = getPreviewImage(variant);
+  const amount = variant.price?.amount;
+  const amountLabel = amount === "" || amount == null ? "Base" : amount;
 
   return (
-    <div className="flex gap-4 border border-[var(--border)] p-3 sm:p-4">
-      <div className="aspect-[3/4] w-20 shrink-0 overflow-hidden bg-[var(--card-subtle)]">
-        {image ? (
-          <img
-            src={image}
-            alt={`Saved variant ${index + 1}`}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-[var(--text-muted)]">
-            No image
+    <div className="border border-[var(--border)]">
+      {/* HEADER */}
+      <div className="flex items-center justify-between gap-4 p-3 sm:p-4">
+        <div className="flex gap-4">
+          <div className="aspect-[3/4] w-16 shrink-0 bg-[var(--card-subtle)]">
+            {image ? (
+              <img
+                src={image}
+                alt={`Variant ${index + 1}`}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center px-1 text-center text-[10px] text-[var(--text-muted)]">
+                No image
+              </div>
+            )}
           </div>
-        )}
+
+          <div className="space-y-1 text-sm">
+            <p className="font-medium">
+              {baseCurrency} {amountLabel}
+            </p>
+
+            <p className="text-xs text-[var(--text-muted)]">
+              Stock: {variant.stock}
+            </p>
+
+            <p className="text-xs text-[var(--text-muted)]">
+              {Object.entries(variant.attributes || {})
+                .map(([k, v]) => `${k}: ${v}`)
+                .join(" · ")}
+            </p>
+          </div>
+        </div>
+
+        {/* ACTIONS */}
+        <div className="flex gap-2">
+          <button onClick={onToggle} className="text-xs border px-2 py-1">
+            {isOpen ? "Close" : "Edit"}
+          </button>
+
+          <button onClick={onRemove} className="text-xs border px-2 py-1">
+            Remove
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-1.5 text-[var(--text)]">
-        <p className="text-sm font-medium leading-tight">
-          {baseCurrency} {variant.price?.amount || "Base"}
-        </p>
-
-        <p className="text-xs text-[var(--text-muted)]">Stock: {variant.stock}</p>
-
-        {Object.entries(variant.attributes || {}).map(([key, value]) => (
-          <p key={`${key}-${value}`} className="text-xs text-[var(--text)]">
-            {key}: {value}
-          </p>
-        ))}
-      </div>
+      {/* COLLAPSE BODY */}
+      {isOpen && (
+        <div className="border-t border-[var(--border)] p-4">{children}</div>
+      )}
     </div>
   );
 };
 
-const VariantPreview = ({ variants, baseCurrency }) => {
+const VariantPreview = ({
+  variants,
+  baseCurrency,
+  openIndex,
+  onToggle,
+  removeVariant,
+  updateVariant,
+  baseImages,
+  basePriceAmount,
+}) => {
   return (
     <div className="space-y-6">
-      <h2 className="text-base font-semibold text-[var(--text)]">
-        Saved Variants
-      </h2>
+      <div className="space-y-4">
+        {variants.length === 0 && (
+          <p className="text-sm text-[var(--text-muted)]">No variants yet.</p>
+        )}
 
-      <div className="grid gap-4">
-        {variants.map((variant, index) => (
-          <VariantPreviewRow
-            key={variant.id || index}
-            variant={variant}
-            index={index}
-            baseCurrency={baseCurrency}
-          />
-        ))}
+        {variants.map((variant, index) => {
+          const isOpen = openIndex === index;
+
+          return (
+            <VariantPreviewRow
+              key={variant._id || index}
+              variant={variant}
+              index={index}
+              baseCurrency={baseCurrency}
+              isOpen={isOpen}
+              onToggle={() => onToggle(index)}
+              onRemove={() => removeVariant(index)}
+            >
+              <VariantCard
+                variant={variant}
+                index={index}
+                onChange={updateVariant}
+                onRemove={removeVariant}
+                baseImages={baseImages}
+                basePrice={basePriceAmount}
+                baseCurrency={baseCurrency}
+              />
+            </VariantPreviewRow>
+          );
+        })}
       </div>
     </div>
   );
