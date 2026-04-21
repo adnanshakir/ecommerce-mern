@@ -13,10 +13,12 @@ import {
 } from "@/components/ui/Select";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import ProductHighlights from "../components/ProductHighlights";
+import { useCart } from "@/features/cart/hooks/useCart";
 
 const ProductDetail = () => {
   const { productId } = useParams();
   const { handleGetProductDetails } = useProduct();
+  const { handleAddToCart } = useCart();
   const product = useSelector((state) => state.product.productDetails);
   const allVariants = useMemo(
     () => [
@@ -263,13 +265,22 @@ const ProductDetail = () => {
 
             {/* ACTIONS */}
             <div className="flex flex-col gap-3 w-full py-3 text-base font-medium">
-              <Button className="bg-[var(--primary-btn)] text-[var(--card)]">
+              <Button
+                onClick={() =>
+                  handleAddToCart({
+                    productId: product._id,
+                    variantId:
+                      selectedVariant._id === "base"
+                        ? product.variants?.[0]?._id
+                        : selectedVariant._id,
+                  })
+                }
+                className="bg-[var(--primary-btn)] text-[var(--card)]"
+              >
                 Add to cart
               </Button>
 
-              <Button variant="outline">
-                Buy now
-              </Button>
+              <Button variant="outline">Buy now</Button>
             </div>
 
             {/* INFO */}
