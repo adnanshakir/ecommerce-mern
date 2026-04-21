@@ -19,18 +19,29 @@ const ProductDetail = () => {
   const { productId } = useParams();
   const { handleGetProductDetails } = useProduct();
   const product = useSelector((state) => state.product.productDetails);
+  const allVariants = useMemo(
+    () => [
+      {
+        _id: "base",
+        images: product?.images || [],
+        price: product?.price,
+      },
+      ...(product?.variants || []),
+    ],
+    [product],
+  );
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState("M");
 
-  const selectedVariant = product?.variants?.[selectedVariantIndex];
-  const displayImages =
-    selectedVariant?.images?.length
-      ? selectedVariant.images
-      : product?.images || [];
-  const displayPrice = selectedVariant?.price?.amount ?? product?.price?.amount ?? 0;
+  const selectedVariant = allVariants[selectedVariantIndex];
+  const displayImages = selectedVariant?.images?.length
+    ? selectedVariant.images
+    : product?.images || [];
+  const displayPrice =
+    selectedVariant?.price?.amount ?? product?.price?.amount ?? 0;
 
   const images = useMemo(() => displayImages || [], [displayImages]);
   const activeImageUrl = images[activeIndex]?.url;
@@ -62,16 +73,21 @@ const ProductDetail = () => {
   }, [selectedVariantIndex]);
 
   useEffect(() => {
-    const variantCount = product?.variants?.length ?? 0;
-    if (!variantCount) {
+    window.scrollTo(0, 0);
+  }, [productId]);
+
+  useEffect(() => {
+    const count = allVariants.length;
+
+    if (!count) {
       setSelectedVariantIndex(0);
       return;
     }
 
-    if (selectedVariantIndex > variantCount - 1) {
+    if (selectedVariantIndex > count - 1) {
       setSelectedVariantIndex(0);
     }
-  }, [product?.variants, selectedVariantIndex]);
+  }, [allVariants, selectedVariantIndex]);
 
   if (!product) {
     return (
@@ -171,7 +187,7 @@ const ProductDetail = () => {
 
             {product?.variants?.length > 0 && (
               <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-                {product.variants.map((variant, index) => {
+                {allVariants.map((variant, index) => {
                   const img = variant?.images?.[0]?.url;
 
                   return (

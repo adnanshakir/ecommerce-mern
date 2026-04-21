@@ -132,7 +132,7 @@ const SellerProductDetail = () => {
     if (!product) return;
 
     const cleanedVariants = variants.filter(isVariantValid);
-    setVariants(cleanedVariants);
+    // setVariants(cleanedVariants);
 
     if (!cleanedVariants.length) {
       setSubmitError("Add at least one non-empty variant before saving.");
@@ -162,13 +162,14 @@ const SellerProductDetail = () => {
         await handleAddProductVariant(productId, variant);
       }
 
+      await handleGetProductDetails(productId);
+
       setSaved(true);
       setOpenIndex(null);
     } catch (err) {
       console.error(err);
     } finally {
       setSaving(false);
-
     }
   };
 

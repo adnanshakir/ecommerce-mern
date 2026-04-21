@@ -101,48 +101,74 @@ export async function getProductDetails(req, res) {
 export async function addProductVariant(req, res) {
   try {
     const { id } = req.params;
+
     const product = await productModel.findOne({
       _id: id,
       seller: req.user._id,
     });
 
     if (!product) {
-      return res
-        .status(404)
-        .json({ message: "Product not found", success: false });
+      return res.status(404).json({
+        message: "Product not found",
+        success: false,
+      });
     }
 
-    const files = req.files;
-    const images = [];
-
-    if (files && files.length !== 0) {
-      (
-        await Promise.all(
-          files.map(async (file) => {
-            const image = await uploadFile({
+    // upload images
+    const images = req.files?.length
+      ? await Promise.all(
+          req.files.map((file) =>
+            uploadFile({
               buffer: file.buffer,
               fileName: file.originalname,
               folder: "E-commerce",
-            });
-            return image;
-          }),
+            }),
+          ),
         )
-      ).map((img) => images.push(img));
-    }
+      : [];
 
     const { priceAmount, priceCurrency, stock } = req.body;
+
     const attributes = req.body.attributes
       ? JSON.parse(req.body.attributes)
       : {};
 
-    console.log(product, images, priceAmount, stock, attributes);
+    const finalPrice = {
+      amount: priceAmount || product.price.amount,
+      currency: priceCurrency || product.price.currency || "INR",
+    };
+
+    // normalize attributes (SAFE + USED)
+    const normalize = (obj = {}) => {
+      const plain = JSON.parse(JSON.stringify(obj));
+      return JSON.stringify(
+        Object.keys(plain)
+          .sort()
+          .reduce((acc, key) => {
+            acc[key] = plain[key];
+            return acc;
+          }, {}),
+      );
+    };
+
+    // duplicate check
+    const isDuplicate = product.variants.some((v) => {
+      return (
+        normalize(v.attributes || {}) === normalize(attributes || {}) &&
+        Number(v.price?.amount) === Number(finalPrice.amount)
+      );
+    });
+
+    if (isDuplicate) {
+      return res.status(400).json({
+        message: "Variant already exists",
+        success: false,
+      });
+    }
 
     const newVariant = {
-      attributes: attributes,
-      price: {
-        amount: priceAmount || product.price.amount,
-        currency: priceCurrency || product.price.currency || "INR",
-      },
+      attributes,
+      price: finalPrice,
       stock,
       images,
     };
@@ -150,14 +176,14 @@ export async function addProductVariant(req, res) {
     product.variants.push(newVariant);
     await product.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Variant added successfully",
       success: true,
       variant: newVariant,
     });
   } catch (error) {
     console.error("Error adding product variant:", error);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Internal server error",
       error: error.message,
     });
