@@ -9,7 +9,6 @@ const Navbar = () => {
   const isHome = location.pathname === "/";
   const user = useSelector((state) => state.auth.user);
   const [scrolled, setScrolled] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
@@ -74,23 +73,14 @@ const Navbar = () => {
     closeOverlays();
   }, [location.pathname]);
 
-  const isActive =
-    !isHome || scrolled || (isDesktop && hovered) || mobileMenuOpen;
+  const isActive = !isHome || scrolled || mobileMenuOpen || searchOpen;
 
   return (
     <nav
-      onMouseEnter={() => {
-        if (!mobileMenuOpen && isDesktop) setHovered(true);
-      }}
-      onMouseLeave={() => {
-        if (isDesktop) setHovered(false);
-      }}
-      className={`${
-        isHome ? "fixed top-0" : "relative"
-      } w-full z-50 transition-colors duration-200 ${
+      className={`fixed top-0 w-full z-50 border-b transition-colors duration-200 ${
         isActive
-          ? "bg-[var(--card)] text-(--text)"
-          : "bg-transparent text-white"
+          ? "border-[var(--border)] bg-[var(--card)] text-(--text)"
+          : "border-transparent bg-transparent text-white"
       }`}
     >
       <div className="mx-auto w-full max-w-7xl px-4 py-5 md:py-6 sm:px-6">
@@ -113,7 +103,6 @@ const Navbar = () => {
                 } else {
                   openMenu();
                 }
-                setHovered(false);
               }}
               aria-label="Toggle menu"
             >

@@ -6,9 +6,6 @@ import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProductCard from "../components/ProductCard";
 
-const HERO_IMAGE_URL =
-  "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1800&q=80";
-
 const Home = () => {
   const navigate = useNavigate();
   const products = useSelector((state) => state.product.products);
@@ -23,11 +20,26 @@ const Home = () => {
   return (
     <Layout mainClassName="bg-[var(--bg)]">
       <section className="relative h-screen min-h-[600px] w-full">
-        <img
-          src={HERO_IMAGE_URL}
-          alt="SNITCH hero"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <picture>
+          {/* mobile */}
+          <source
+            media="(max-width: 640px)"
+            srcSet="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80"
+          />
+
+          {/* tablet */}
+          <source
+            media="(max-width: 1024px)"
+            srcSet="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=80"
+          />
+
+          {/* desktop */}
+          <img
+            src="https://images.unsplash.com/photo-1724184888128-a9967d0542ad?auto=format&fit=crop&w=1800&q=80"
+            alt="SNITCH hero"
+            className="absolute inset-0 h-full w-full object-cover object-[center_top]"
+          />
+        </picture>
         <div className="absolute inset-0 bg-black/40" />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6">
@@ -48,7 +60,9 @@ const Home = () => {
         id="products"
         className="mx-auto w-full max-w-7xl px-4 py-20 text-center sm:px-6"
       >
-        <h2 className="mb-10 text-2xl font-medium tracking-tight text-(--text)">Latest Drops</h2>
+        <h2 className="mb-10 text-2xl font-medium tracking-tight text-(--text)">
+          Latest Drops
+        </h2>
 
         {products?.length ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
