@@ -3,8 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useProduct } from "../hooks/useProduct";
 import { Link } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import Layout from "@/components/layout/Layout";
 import ProductCard from "../components/ProductCard";
 
 const HERO_IMAGE_URL =
@@ -22,7 +21,7 @@ const Home = () => {
   }, []);
 
   return (
-    <main className="bg-[var(--bg)]">
+    <Layout mainClassName="bg-[var(--bg)]">
       <section className="relative h-screen min-h-[600px] w-full">
         <img
           src={HERO_IMAGE_URL}
@@ -30,8 +29,6 @@ const Home = () => {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40" />
-
-        <Navbar />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6">
           <button
@@ -77,9 +74,7 @@ const Home = () => {
           </div>
         )}
       </section>
-
-      <Footer />
-    </main>
+    </Layout>
   );
 };
 

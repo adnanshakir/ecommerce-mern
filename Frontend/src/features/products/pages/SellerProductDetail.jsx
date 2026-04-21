@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { useProduct } from "../hooks/useProduct";
+import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import ProductBaseInfo from "../components/variants/ProductBaseInfo";
 import VariantPreview from "../components/variants/VariantPreview";
@@ -132,7 +133,6 @@ const SellerProductDetail = () => {
     if (!product) return;
 
     const cleanedVariants = variants.filter(isVariantValid);
-    // setVariants(cleanedVariants);
 
     if (!cleanedVariants.length) {
       setSubmitError("Add at least one non-empty variant before saving.");
@@ -183,36 +183,31 @@ const SellerProductDetail = () => {
 
   if (!product) {
     return (
-      <main className="min-h-screen bg-[var(--bg)] px-4 py-8 sm:px-6">
+      <Layout>
         <div className="mx-auto max-w-7xl text-sm text-[var(--text-muted)]">
           Loading product details...
         </div>
-      </main>
+      </Layout>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[var(--bg)]">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-2">
-        <ProductBaseInfo
-          product={product}
-          baseCurrency={baseCurrency}
-          basePrice={basePriceAmount}
-          baseImages={baseImages}
-        />
+    <Layout>
+      <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-2">
+          <ProductBaseInfo
+            product={product}
+            baseCurrency={baseCurrency}
+            basePrice={basePriceAmount}
+            baseImages={baseImages}
+          />
 
-        <section className="space-y-6">
-          <>
+          <section className="space-y-6">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-base font-semibold text-[var(--text)]">
                 Variants
               </h2>
 
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleAddVariant}
-              >
+              <Button type="button" variant="outline" onClick={handleAddVariant}>
                 Add Variant
               </Button>
             </div>
@@ -228,9 +223,7 @@ const SellerProductDetail = () => {
               basePriceAmount={basePriceAmount}
             />
 
-            {submitError && (
-              <p className="text-sm text-red-600">{submitError}</p>
-            )}
+            {submitError && <p className="text-sm text-red-600">{submitError}</p>}
 
             <div className="pt-2">
               {saved ? (
@@ -247,10 +240,9 @@ const SellerProductDetail = () => {
                 </Button>
               )}
             </div>
-          </>
-        </section>
-      </div>
-    </main>
+          </section>
+        </div>
+    </Layout>
   );
 };
 

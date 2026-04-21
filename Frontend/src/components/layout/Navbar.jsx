@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, X, Search } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -10,8 +10,48 @@ const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+
+  const closeOverlays = () => {
+    setSearchOpen(false);
+    setMobileMenuOpen(false);
+  };
+
+  const openSearch = () => {
+    setMobileMenuOpen(false);
+    setSearchOpen(true);
+  };
+
+  const openMenu = () => {
+    setSearchOpen(false);
+    setMobileMenuOpen(true);
+  };
+
+  useEffect(() => {
+    if (searchOpen) {
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen && !mobileMenuOpen) return;
+
+    const handleKey = (e) => {
+      if (e.key === "Escape") {
+        closeOverlays();
+      }
+    };
+
+    window.addEventListener("keydown", handleKey);
+
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [searchOpen, mobileMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -30,6 +70,10 @@ const Navbar = () => {
     if (scrolled) setMobileMenuOpen(false);
   }, [scrolled]);
 
+  useEffect(() => {
+    closeOverlays();
+  }, [location.pathname]);
+
   const isActive =
     !isHome || scrolled || (isDesktop && hovered) || mobileMenuOpen;
 
@@ -41,7 +85,9 @@ const Navbar = () => {
       onMouseLeave={() => {
         if (isDesktop) setHovered(false);
       }}
-      className={`fixed top-0 w-full z-50 transition-colors duration-200 ${
+      className={`${
+        isHome ? "fixed top-0" : "relative"
+      } w-full z-50 transition-colors duration-200 ${
         isActive
           ? "bg-[var(--card)] text-[var(--text)]"
           : "bg-transparent text-white"
@@ -62,7 +108,11 @@ const Navbar = () => {
                   : "text-white hover:bg-white/10",
               ].join(" ")}
               onClick={() => {
-                setMobileMenuOpen((prev) => !prev);
+                if (mobileMenuOpen) {
+                  setMobileMenuOpen(false);
+                } else {
+                  openMenu();
+                }
                 setHovered(false);
               }}
               aria-label="Toggle menu"
@@ -86,19 +136,57 @@ const Navbar = () => {
 
           {/* RIGHT */}
           <div className="flex items-center justify-end gap-2">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className={[
+                isActive
+                  ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                  : "text-white hover:bg-white/10",
+                mobileMenuOpen
+                  ? "opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
+                  : "",
+              ].join(" ")}
+            >
+              <Link to="/cart">
+                <ShoppingBag size={18} />
+              </Link>
+            </Button>
+
             <div className="hidden md:flex items-center gap-2">
               {user ? (
-                <Button
-                  asChild
-                  variant="ghost"
-                  className={
-                    isActive
-                      ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
-                      : "text-white hover:bg-white/10 hover:text-white"
-                  }
-                >
-                  <Link to="/seller/dashboard">Dashboard</Link>
-                </Button>
+                <>
+                  {/* SELLER ONLY */}
+                  {user.role === "seller" && (
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className={
+                        isActive
+                          ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                          : "text-white hover:bg-white/10 hover:text-white"
+                      }
+                    >
+                      <Link to="/seller/dashboard">Dashboard</Link>
+                    </Button>
+                  )}
+
+                  {/* SEARCH */}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={
+                      isActive
+                        ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                        : "text-white hover:bg-white/10"
+                    }
+                    onClick={openSearch}
+                  >
+                    <Search size={18} />
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button
@@ -112,6 +200,7 @@ const Navbar = () => {
                   >
                     <Link to="/login">Login</Link>
                   </Button>
+
                   <Button
                     asChild
                     variant="ghost"
@@ -126,22 +215,6 @@ const Navbar = () => {
                 </>
               )}
             </div>
-
-            <Button
-              asChild
-              variant="ghost"
-              size="icon"
-              className={
-                isActive
-                  ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
-                  : "text-white hover:bg-white/10"
-              }
-              aria-label="Bag"
-            >
-              <Link to="/">
-                <ShoppingBag size={18} />
-              </Link>
-            </Button>
           </div>
         </div>
 
@@ -150,45 +223,90 @@ const Navbar = () => {
           <>
             {/* backdrop */}
             <div
-              className="fixed inset-0  z-40"
+              className="fixed inset-0 bg-black/40 z-40"
               onClick={() => setMobileMenuOpen(false)}
             />
 
-            {/* menu */}
-            <div className="md:hidden absolute top-full left-0 w-full bg-[var(--card)] border-t border-[var(--border)] p-4 z-50">
-              {user ? (
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="w-full justify-start text-[var(--text)] hover:bg-[var(--card-subtle)]"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Link to="/seller/dashboard">Dashboard</Link>
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className="w-full justify-start text-[var(--text)] hover:bg-[var(--card-subtle)]"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Link to="/login">Login</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className="w-full justify-start text-[var(--text)] hover:bg-[var(--card-subtle)]"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Link to="/register">Register</Link>
-                  </Button>
-                </>
-              )}
+            {/* drawer */}
+            <div className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-[var(--card)] z-50 p-5 transition-transform duration-300 md:hidden">
+              <div className="mb-6 flex items-center justify-between">
+                <span className="text-sm font-medium">MENU</span>
+                <button type="button" onClick={() => setMobileMenuOpen(false)}>
+                  ✕
+                </button>
+              </div>
+
+              <input
+                placeholder="Search for"
+                className="mb-6 w-full border-b pb-2 outline-none placeholder:text-[var(--text-muted)]"
+              />
+
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <p className="text-xs text-[var(--text-muted)]">Shop</p>
+                  <p className="text-base text-[var(--text)]">Tops</p>
+                  <p className="text-base text-[var(--text)]">Bottoms</p>
+                </div>
+
+                <div className="space-y-3 border-t pt-6">
+                  <p className="text-xs text-[var(--text-muted)]">Navigation</p>
+                  {user?.role === "seller" && (
+                    <Link
+                      to="/seller/dashboard"
+                      className="block text-base text-[var(--text)]"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                  )}
+                  {!user && (
+                    <>
+                      <Link
+                        to="/login"
+                        className="block text-base text-[var(--text)]"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="block text-base text-[var(--text)]"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Register
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </>
         )}
       </div>
+      {searchOpen && (
+        <div
+          className="fixed inset-0 bg-[var(--card)] z-50"
+          onClick={closeOverlays}
+        >
+          <div
+            className="h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-6 right-6"
+              onClick={closeOverlays}
+            >
+              ✕
+            </button>
+
+            <input
+              autoFocus
+              placeholder="Search for"
+              className="w-1/2 border-b bg-transparent text-xl outline-none placeholder:text-[var(--text-muted)]"
+            />
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
