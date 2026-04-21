@@ -103,7 +103,7 @@ const ImageUploader = ({ files, onChange, error }) => {
             strokeWidth={1.5}
             className={error ? "text-[var(--error)]" : "text-[var(--text-muted)]"}
           />
-          <p className="text-sm font-medium text-[var(--text)] text-center">
+          <p className="text-sm font-medium text-(--text) text-center">
             Drag images here or{" "}
             <span className="text-[var(--primary-btn)] underline-offset-2 hover:underline">
               click to browse

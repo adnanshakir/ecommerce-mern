@@ -17,7 +17,7 @@ const ProductBaseInfo = ({ product, baseCurrency, basePrice, baseImages }) => {
         )}
       </div>
       <div className="space-y-1">
-        <h1 className="text-lg font-semibold text-[var(--text)]">{product.name}</h1>
+        <h1 className="text-lg font-semibold text-(--text)">{product.name}</h1>
         <p className="text-sm text-[var(--text-muted)]">
           Base price: {baseCurrency} {basePrice}
         </p>

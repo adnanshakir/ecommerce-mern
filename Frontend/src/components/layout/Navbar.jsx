@@ -89,7 +89,7 @@ const Navbar = () => {
         isHome ? "fixed top-0" : "relative"
       } w-full z-50 transition-colors duration-200 ${
         isActive
-          ? "bg-[var(--card)] text-[var(--text)]"
+          ? "bg-[var(--card)] text-(--text)"
           : "bg-transparent text-white"
       }`}
     >
@@ -104,7 +104,7 @@ const Navbar = () => {
               className={[
                 "md:hidden",
                 isActive
-                  ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                  ? "text-(--text) hover:bg-[var(--card-subtle)]"
                   : "text-white hover:bg-white/10",
               ].join(" ")}
               onClick={() => {
@@ -119,6 +119,31 @@ const Navbar = () => {
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </Button>
+
+            <div className="hidden md:flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                className={
+                  isActive
+                    ? "text-(--text) hover:bg-[var(--card-subtle)]"
+                    : "text-white hover:bg-white/10 hover:text-white"
+                }
+              >
+                Tops
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className={
+                  isActive
+                    ? "text-(--text) hover:bg-[var(--card-subtle)]"
+                    : "text-white hover:bg-white/10 hover:text-white"
+                }
+              >
+                Bottoms
+              </Button>
+            </div>
           </div>
 
           {/* CENTER */}
@@ -127,7 +152,7 @@ const Navbar = () => {
               to="/"
               className={[
                 "text-xl md:text-2xl font-extrabold tracking-[0.12em] uppercase leading-none",
-                isActive ? "text-[var(--text)]" : "text-white",
+                isActive ? "text-(--text)" : "text-white",
               ].join(" ")}
             >
               SNITCH
@@ -142,7 +167,7 @@ const Navbar = () => {
               size="icon"
               className={[
                 isActive
-                  ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                  ? "text-(--text) hover:bg-[var(--card-subtle)]"
                   : "text-white hover:bg-white/10",
                 mobileMenuOpen
                   ? "opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
@@ -164,7 +189,7 @@ const Navbar = () => {
                       variant="ghost"
                       className={
                         isActive
-                          ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                          ? "text-(--text) hover:bg-[var(--card-subtle)]"
                           : "text-white hover:bg-white/10 hover:text-white"
                       }
                     >
@@ -179,7 +204,7 @@ const Navbar = () => {
                     size="icon"
                     className={
                       isActive
-                        ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                        ? "text-(--text) hover:bg-[var(--card-subtle)]"
                         : "text-white hover:bg-white/10"
                     }
                     onClick={openSearch}
@@ -194,7 +219,7 @@ const Navbar = () => {
                     variant="ghost"
                     className={
                       isActive
-                        ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                        ? "text-(--text) hover:bg-[var(--card-subtle)]"
                         : "text-white hover:bg-white/10 hover:text-white"
                     }
                   >
@@ -206,7 +231,7 @@ const Navbar = () => {
                     variant="ghost"
                     className={
                       isActive
-                        ? "text-[var(--text)] hover:bg-[var(--card-subtle)]"
+                        ? "text-(--text) hover:bg-[var(--card-subtle)]"
                         : "text-white hover:bg-white/10 hover:text-white"
                     }
                   >
@@ -219,69 +244,79 @@ const Navbar = () => {
         </div>
 
         {/* MOBILE MENU */}
-        {mobileMenuOpen && (
-          <>
-            {/* backdrop */}
-            <div
-              className="fixed inset-0 bg-black/40 z-40"
-              onClick={() => setMobileMenuOpen(false)}
+        <>
+          {/* backdrop */}
+          <div
+            className={[
+              "fixed inset-0 z-40 bg-black/55 backdrop-blur-[3px] transition-opacity duration-300 md:hidden",
+              mobileMenuOpen
+                ? "opacity-100 pointer-events-auto"
+                : "opacity-0 pointer-events-none",
+            ].join(" ")}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          {/* drawer */}
+          <div
+            className={[
+              "fixed top-0 left-0 z-50 h-full w-[80%] max-w-sm bg-[var(--card)] p-5 shadow-xl transition-transform duration-300 ease-out will-change-transform md:hidden",
+              mobileMenuOpen
+                ? "translate-x-0"
+                : "-translate-x-full pointer-events-none",
+            ].join(" ")}
+          >
+            <div className="mb-6 flex items-center justify-between">
+              <span className="text-sm font-medium">MENU</span>
+              <button type="button" onClick={() => setMobileMenuOpen(false)}>
+                ✕
+              </button>
+            </div>
+
+            <input
+              placeholder="Search for"
+              className="mb-6 w-full border-b pb-2 outline-none placeholder:text-[var(--text-muted)]"
             />
 
-            {/* drawer */}
-            <div className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-[var(--card)] z-50 p-5 transition-transform duration-300 md:hidden">
-              <div className="mb-6 flex items-center justify-between">
-                <span className="text-sm font-medium">MENU</span>
-                <button type="button" onClick={() => setMobileMenuOpen(false)}>
-                  ✕
-                </button>
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <p className="text-xs text-[var(--text-muted)]">Shop</p>
+                <p className="text-base text-(--text)">Tops</p>
+                <p className="text-base text-(--text)">Bottoms</p>
               </div>
 
-              <input
-                placeholder="Search for"
-                className="mb-6 w-full border-b pb-2 outline-none placeholder:text-[var(--text-muted)]"
-              />
-
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <p className="text-xs text-[var(--text-muted)]">Shop</p>
-                  <p className="text-base text-[var(--text)]">Tops</p>
-                  <p className="text-base text-[var(--text)]">Bottoms</p>
-                </div>
-
-                <div className="space-y-3 border-t pt-6">
-                  <p className="text-xs text-[var(--text-muted)]">Navigation</p>
-                  {user?.role === "seller" && (
+              <div className="space-y-3 border-t pt-6">
+                <p className="text-xs text-[var(--text-muted)]">Navigation</p>
+                {user?.role === "seller" && (
+                  <Link
+                    to="/seller/dashboard"
+                    className="block text-base text-(--text)"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                )}
+                {!user && (
+                  <>
                     <Link
-                      to="/seller/dashboard"
-                      className="block text-base text-[var(--text)]"
+                      to="/login"
+                      className="block text-base text-(--text)"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      Dashboard
+                      Login
                     </Link>
-                  )}
-                  {!user && (
-                    <>
-                      <Link
-                        to="/login"
-                        className="block text-base text-[var(--text)]"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Login
-                      </Link>
-                      <Link
-                        to="/register"
-                        className="block text-base text-[var(--text)]"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Register
-                      </Link>
-                    </>
-                  )}
-                </div>
+                    <Link
+                      to="/register"
+                      className="block text-base text-(--text)"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
-          </>
-        )}
+          </div>
+        </>
       </div>
       {searchOpen && (
         <div

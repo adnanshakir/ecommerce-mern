@@ -48,7 +48,7 @@ const Home = () => {
         id="products"
         className="mx-auto w-full max-w-7xl px-4 py-20 text-center sm:px-6"
       >
-        <h2 className="mb-10 text-2xl font-medium tracking-tight text-[var(--text)]">Latest Drops</h2>
+        <h2 className="mb-10 text-2xl font-medium tracking-tight text-(--text)">Latest Drops</h2>
 
         {products?.length ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -67,7 +67,7 @@ const Home = () => {
             <p className="text-sm text-[var(--text-muted)]">No products yet</p>
             <button
               onClick={() => navigate("/seller/create-product")}
-              className="border border-[var(--border)] px-5 py-2 text-sm text-[var(--text)] transition-colors duration-200 hover:bg-[var(--card-subtle)]"
+              className="border border-[var(--border)] px-5 py-2 text-sm text-(--text) transition-colors duration-200 hover:bg-[var(--card-subtle)]"
             >
               Create Product
             </button>

@@ -91,7 +91,7 @@ const Login = () => {
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--primary-btn)] shrink-0">
               <Store size={16} color="#fff" strokeWidth={2} />
             </div>
-            <h1 className="text-lg font-bold tracking-widest uppercase text-[var(--text)] leading-none">
+            <h1 className="text-lg font-bold tracking-widest uppercase text-(--text) leading-none">
               SNITCH
             </h1>
           </div>

@@ -55,7 +55,7 @@ const FormField = ({
           aria-describedby={error ? `${id}-error` : undefined}
           className={[
             "input-field w-full rounded-lg border bg-[var(--card)]",
-            "px-3.5 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--text-muted)]",
+            "px-3.5 py-2.5 text-sm text-(--text) placeholder:text-[var(--text-muted)]",
             Icon ? "pl-10" : "",
             showToggle ? "pr-10" : "",
             error
@@ -71,7 +71,7 @@ const FormField = ({
             tabIndex={-1}
             aria-label={visible ? "Hide password" : "Show password"}
             onClick={() => setVisible((v) => !v)}
-            className="absolute inset-y-0 right-3 flex items-center text-[var(--text-muted)] hover:text-[var(--text)] transition-colors duration-150"
+            className="absolute inset-y-0 right-3 flex items-center text-[var(--text-muted)] hover:text-(--text) transition-colors duration-150"
           >
             {visible ? (
               <EyeOff size={14} strokeWidth={1.75} />

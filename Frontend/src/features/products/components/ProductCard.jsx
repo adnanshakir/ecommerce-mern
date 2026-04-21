@@ -39,8 +39,8 @@ const ProductCard = ({ product, onClick }) => {
       </div>
 
       <CardContent className="px-0 pt-3 pb-0 space-y-0.5">
-        <p className="truncate text-sm font-medium text-[var(--text)]">{name}</p>
-        <p className="text-sm text-[var(--text)]">₹{amount}</p>
+        <p className="truncate text-sm font-medium text-(--text)">{name}</p>
+        <p className="text-sm text-(--text)">₹{amount}</p>
       </CardContent>
     </Card>
   );

@@ -44,7 +44,7 @@ const Dashboard = () => {
             {/* Header */}
             <header className="flex items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl font-semibold text-[var(--text)]">
+                <h1 className="text-xl font-semibold text-(--text)">
                   Your Products
                 </h1>
                 <p className="mt-1 text-sm text-[var(--text-muted)]">

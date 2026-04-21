@@ -122,14 +122,14 @@ const ProductDetail = () => {
                       <button
                         type="button"
                         onClick={setPrevImage}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition border border-[var(--border)] bg-[var(--card)] p-1 text-[var(--text)]"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition border border-[var(--border)] bg-[var(--card)] p-1 text-(--text)"
                       >
                         <ChevronLeft size={16} />
                       </button>
                       <button
                         type="button"
                         onClick={setNextImage}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition border border-[var(--border)] bg-[var(--card)] p-1 text-[var(--text)]"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition border border-[var(--border)] bg-[var(--card)] p-1 text-(--text)"
                       >
                         <ChevronRight size={16} />
                       </button>
@@ -170,11 +170,11 @@ const ProductDetail = () => {
 
             {/* RIGHT */}
             <div className="space-y-5">
-              <h1 className="text-2xl font-semibold uppercase tracking-[0.08em] text-[var(--text)]">
+              <h1 className="text-2xl font-semibold uppercase tracking-[0.08em] text-(--text)">
                 {product.name}
               </h1>
 
-              <p className="text-xl text-[var(--text)]">₹{amount}</p>
+              <p className="text-xl text-(--text)">₹{amount}</p>
 
               {product?.variants?.length > 0 && (
                 <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
@@ -218,7 +218,7 @@ const ProductDetail = () => {
                   Size
                 </p>
                 <Select value={size} onValueChange={setSize}>
-                  <SelectTrigger className="w-36 border-[var(--border)] bg-[var(--card)] text-[var(--text)]">
+                  <SelectTrigger className="w-36 border-[var(--border)] bg-[var(--card)] text-(--text)">
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
                   <SelectContent>

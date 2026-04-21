@@ -16,7 +16,7 @@ const VariantCard = ({
   return (
     <div className="space-y-4 border border-[var(--border)] p-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-[var(--text)]">
+        <p className="text-sm font-medium text-(--text)">
           Variant {index + 1}
         </p>
         <Button type="button" variant="ghost" onClick={() => onRemove(index)}>

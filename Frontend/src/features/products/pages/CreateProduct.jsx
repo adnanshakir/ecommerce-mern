@@ -35,7 +35,7 @@ const fieldLabelCls =
 
 const fieldCls = (hasError) =>
   [
-    "h-10 rounded-lg bg-[var(--card)] text-[var(--text)] placeholder:text-[var(--text-muted)]",
+    "h-10 rounded-lg bg-[var(--card)] text-(--text) placeholder:text-[var(--text-muted)]",
     hasError
       ? "border-[var(--error)]"
       : "border-[var(--border)] hover:border-[var(--border-focus)]",
@@ -54,7 +54,7 @@ const PageHeader = () => (
       <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--primary-btn)] shrink-0">
         <Store size={16} strokeWidth={2} className="text-[var(--card)]" />
       </div>
-      <span className="text-lg font-bold tracking-widest uppercase text-[var(--text)] leading-none">
+      <span className="text-lg font-bold tracking-widest uppercase text-(--text) leading-none">
         SNITCH
       </span>
     </div>
@@ -170,12 +170,12 @@ const CreateProduct = () => {
         <PageHeader />
 
         <Card
-          className="register-card rounded-2xl border border-[var(--border)] bg-[var(--card)] text-[var(--text)] py-0"
+          className="register-card rounded-2xl border border-[var(--border)] bg-[var(--card)] text-(--text) py-0"
           style={{ boxShadow: "0 6px 32px rgba(27,28,26,0.07)" }}
           aria-label="Create a new product"
         >
           <CardHeader className="px-7 pt-7 sm:px-8 sm:pt-8 pb-2">
-            <CardTitle className="text-[17px] font-semibold text-[var(--text)]">
+            <CardTitle className="text-[17px] font-semibold text-(--text)">
               Create Product
             </CardTitle>
             <CardDescription className="text-[var(--text-muted)]">

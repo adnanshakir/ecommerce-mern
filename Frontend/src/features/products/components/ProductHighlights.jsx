@@ -18,7 +18,7 @@ const ProductHighlights = () => {
   ];
 
   return (
-    <div className="space-y-3 text-sm text-[var(--text)]">
+    <div className="space-y-3 text-sm text-(--text)">
       {items.map((item, i) => {
         const Icon = item.icon;
         return (

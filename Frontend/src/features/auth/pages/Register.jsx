@@ -213,7 +213,7 @@ const Register = () => {
 
             {/* Label text */}
             <div className="leading-snug">
-              <span className="text-sm font-medium text-[var(--text)]">
+              <span className="text-sm font-medium text-(--text)">
                 Register as Seller
               </span>
               <p className="text-[11px] text-[var(--text-muted)] mt-0">
