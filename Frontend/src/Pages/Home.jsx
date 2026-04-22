@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { useProduct } from "../hooks/useProduct";
-import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
-import ProductCard from "../components/ProductCard";
+import { useProduct } from "@/features/products/hooks/useProduct";
+import ProductCard from "@/features/products/components/ProductCard";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import {
   getSellerProducts,
   getProductDetails,
   addProductVariant,
+  searchProducts,
 } from "../controllers/product.controller.js";
 import multer from "multer";
 import { createProductValidator } from "../validator/product.validator.js";
@@ -46,6 +47,13 @@ router.get("/seller", authenticateSeller, getSellerProducts);
 */
 router.get("/", getAllProducts);
 
+
+/*
+@route GET /api/products/search
+@desc Search products by name
+@access Public
+*/
+router.get("/search", searchProducts);
 
 /*
 @route GET /api/products/detail/:id

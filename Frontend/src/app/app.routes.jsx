@@ -2,17 +2,19 @@ import { createBrowserRouter, Outlet } from "react-router";
 import Register from "../features/auth/pages/Register";
 import Login from "../features/auth/pages/Login";
 import CreateProduct from "../features/products/pages/CreateProduct";
-import Dashboard from "@/features/products/pages/Dashboard";
+import Products from "../features/products/pages/Products";
+
 import Protected from "@/features/auth/components/Protected";
-import Home from "@/features/products/pages/Home";
 import ProductDetail from "@/features/products/pages/ProductDetail";
 import SellerProductDetail from "@/features/products/pages/SellerProductDetail";
 import Cart from "@/features/cart/pages/Cart";
+import Home from "@/Pages/Home";
+import Dashboard from "@/Pages/Dashboard";
 
 export const routes = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <Home/>,
   },
   {
     path: "/register",
@@ -21,6 +23,10 @@ export const routes = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/products",
+    element: <Products />,
   },
   {
     path: "/product/:productId",
@@ -48,7 +54,7 @@ export const routes = createBrowserRouter([
       },
       {
         path: "dashboard",
-        element: <Dashboard />,
+        element: <Dashboard/>,
       },
       {
         path: "product/:productId",

@@ -15,8 +15,13 @@ export async function getSellerProducts() {
   return response.data;
 }
 
-export async function getAllProducts() {
-  const response = await productApi.get("/");
+export async function getAllProducts({ category, sub } = {}) {
+  const params = new URLSearchParams();
+  if (category) params.append("category", category);
+  if (sub) params.append("sub", sub);
+
+  const query = params.toString();
+  const response = await productApi.get(query ? `/?${query}` : "/");
   return response.data;
 }
 
@@ -43,5 +48,10 @@ export async function addProductVariant(productId, newProductVariant) {
 
   const response = await productApi.post(`/${productId}/variants`, formData);
 
+  return response.data;
+}
+
+export async function searchProducts(query) {
+  const response = await productApi.get(`/search?q=${encodeURIComponent(query)}`);
   return response.data;
 }

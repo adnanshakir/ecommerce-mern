@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useProduct } from "../hooks/useProduct";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import ProductCard from "../components/ProductCard";
 import Layout from "@/components/layout/Layout";
+import { useProduct } from "@/features/products/hooks/useProduct";
+import ProductCard from "@/features/products/components/ProductCard";
 
 const SKELETON_COUNT = 8;
 const CREATE_PRODUCT_PATH = "/seller/create-product";

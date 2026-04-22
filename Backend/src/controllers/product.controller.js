@@ -3,8 +3,24 @@ import productModel from "../models/product.model.js";
 
 export async function createProduct(req, res) {
   try {
-    const { name, description, priceAmount, priceCurrency } = req.body;
+    const {
+      name,
+      description,
+      priceAmount,
+      priceCurrency,
+      category,
+      subCategory,
+    } = req.body;
     const sellerId = req.user._id;
+
+    const exists = await productModel.findOne({ name, seller: sellerId });
+
+    if (exists) {
+      return res.status(400).json({
+        message: "A product with this name already exists",
+        success: false,
+      });
+    }
 
     const images = await Promise.all(
       req.files.map(async (file) => {
@@ -16,6 +32,7 @@ export async function createProduct(req, res) {
       }),
     );
 
+
     const product = await productModel.create({
       name,
       description,
@@ -25,6 +42,8 @@ export async function createProduct(req, res) {
       },
       images,
       seller: sellerId,
+      category: category?.toLowerCase().trim(),
+      subCategory: subCategory?.toLowerCase().trim(),
     });
 
     res.status(201).json(product);
@@ -59,7 +78,14 @@ export async function getSellerProducts(req, res) {
 
 export async function getAllProducts(req, res) {
   try {
-    const products = await productModel.find();
+    const { category, sub } = req.query;
+
+    const filter = {
+      ...(category && { category }),
+      ...(sub && { subCategory: sub }),
+    };
+
+    const products = await productModel.find(filter);
 
     res.status(200).json({
       message: "Products fetched successfully",
@@ -187,5 +213,27 @@ export async function addProductVariant(req, res) {
       message: "Internal server error",
       error: error.message,
     });
+  }
+}
+
+export async function searchProducts(req, res) {
+  try {
+    const { q } = req.query;
+
+    if (!q || !q.trim()) {
+      return res.status(200).json({ products: [] });
+    }
+
+    const products = await productModel
+      .find({
+        name: { $regex: q.trim(), $options: "i" },
+      })
+      .limit(10)
+      .select("name images price category");
+
+    res.status(200).json({ products, success: true });
+  } catch (err) {
+    console.error("Search failed:", err);
+    res.status(500).json({ message: "Search failed", success: false });
   }
 }
