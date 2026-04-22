@@ -1,6 +1,6 @@
 import { addToCart, getCartItems } from "../service/cart.api";
 import { useDispatch } from "react-redux";
-import { addItem } from "../state/cart.slice";
+import { addItem, setItems } from "../state/cart.slice";
 
 export const useCart = () => {
   const dispatch = useDispatch();
@@ -8,7 +8,7 @@ export const useCart = () => {
   const handleAddToCart = async ({ productId, variantId }) => {
     try {
       const data = await addToCart({ productId, variantId });
-      //   dispatch(addItem(data.item));
+        dispatch(addItem(data.item));
 
       return data;
     } catch (error) {
@@ -16,10 +16,10 @@ export const useCart = () => {
     }
   };
 
-  const handleGetCartItems = async () => {
+  const handleGetCart = async () => {
     try {
-      const items = await getCartItems();
-      // You can dispatch an action to set the cart items in the Redux store here
+      const data = await getCartItems();
+      dispatch(setItems(data.cart));
     } catch (error) {
       console.error("Failed to fetch cart items:", error);
     }
@@ -27,5 +27,6 @@ export const useCart = () => {
 
   return {
     handleAddToCart,
+    handleGetCart,
   };
 };

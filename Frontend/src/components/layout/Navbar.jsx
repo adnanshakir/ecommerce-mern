@@ -205,17 +205,17 @@ const Navbar = () => {
               className="mb-6 w-full border-b pb-2 outline-none placeholder:text-[var(--text-muted)]"
             />
 
-            <div className="space-y-8 text-base">
+            <div className="space-y-8 text-base font-semibold">
               <div className="space-y-4">
                 <p className="text-xs uppercase text-[var(--text-muted)] tracking-wide">
                   Shop
                 </p>
 
                 <div className="flex flex-col gap-3">
-                  <Link to="/category/tops" className="nav-link">
+                  <Link to="/category/tops" >
                     Tops
                   </Link>
-                  <Link to="/category/bottoms" className="nav-link">
+                  <Link to="/category/bottoms">
                     Bottoms
                   </Link>
                 </div>
@@ -229,7 +229,7 @@ const Navbar = () => {
                 <div className="flex flex-col gap-3">
                   <Link
                     to="/cart"
-                    className="nav-link text-(--text)"
+                    className=" text-(--text)"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Cart
@@ -237,7 +237,7 @@ const Navbar = () => {
                   {user?.role === "seller" && (
                     <Link
                       to="/seller/dashboard"
-                      className="nav-link text-(--text)"
+                      className="text-(--text)"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Dashboard

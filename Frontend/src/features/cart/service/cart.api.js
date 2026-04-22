@@ -6,7 +6,7 @@ const cartApi = axios.create({
 });
 
 export async function getCartItems() {
-  const response = await cartApi.get("/items");
+  const response = await cartApi.get("/", { withCredentials: true });
   return response.data;
 }
 
