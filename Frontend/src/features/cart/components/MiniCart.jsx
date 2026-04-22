@@ -50,25 +50,36 @@ const MiniCart = ({ open, onClose }) => {
           {items.length ? (
             <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
               {items.map((item, index) => (
-                <div key={item?._id || `${item?.product?._id || "item"}-${index}`} className="flex gap-3">
+                <div
+                  key={item?._id || `item-${index}`}
+                  className="flex gap-3"
+                >
                   <img
-                    src={item?.variantData?.images?.[0]?.url || item?.product?.images?.[0]?.url}
-                    alt={item?.product?.name || "Cart item"}
+                    src={item.image}
+                    alt={item.name || "Cart item"}
                     className="h-20 w-16 object-cover"
                   />
                   <div>
-                    <p className="text-sm text-(--text)">{item?.product?.name}</p>
-                    {item?.size && (
-                      <p className="text-xs text-[var(--text-muted)]">Size: {item.size}</p>
+                    <p className="text-sm text-(--text)">{item.name}</p>
+                    {item.size && (
+                      <p className="text-xs text-[var(--text-muted)]">
+                        Size: {item.size}
+                      </p>
                     )}
-                    <p className="text-xs text-[var(--text-muted)]">Qty: {item?.quantity || 0}</p>
-                    <p className="text-sm text-(--text)">₹{item?.price?.amount || 0}</p>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      Qty: {item?.quantity || 0}
+                    </p>
+                    <p className="text-sm text-(--text)">
+                      ₹{item?.price?.amount || 0}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-[var(--text-muted)]">Your cart is empty.</p>
+            <p className="text-sm text-[var(--text-muted)]">
+              Your cart is empty.
+            </p>
           )}
         </div>
 

@@ -1,4 +1,4 @@
-import CartItem from "@/components/cart/CartItem";
+import CartItem from "@/features/cart/components/CartItem";
 import { useNavigate } from "react-router";
 
 const CartList = ({ items, onIncrease, onDecrease, onRemove }) => {
@@ -20,8 +20,9 @@ const CartList = ({ items, onIncrease, onDecrease, onRemove }) => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-end border-b border-[var(--border)] pb-3">
+    <div>
+      {/* Table header — desktop only */}
+      <div className="hidden md:flex items-center justify-end border-b border-[var(--border)] pb-3">
         <div className="flex items-center gap-8 text-xs text-[var(--text-muted)]">
           <p className="w-16 text-center">Price</p>
           <p className="w-24 text-center">Qty</p>
@@ -31,7 +32,7 @@ const CartList = ({ items, onIncrease, onDecrease, onRemove }) => {
 
       {items.map((item, index) => (
         <CartItem
-          key={item?._id || `${item?.product?._id || "item"}-${index}`}
+          key={item?._id || `item-${index}`}
           item={item}
           onIncrease={onIncrease}
           onDecrease={onDecrease}

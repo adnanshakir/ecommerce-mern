@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router";
+
 const CartSummary = ({ items }) => {
+  const navigate = useNavigate();
+
   const subtotal = items.reduce(
     (acc, item) => acc + (item?.price?.amount || 0) * (item?.quantity || 0),
     0,
@@ -15,7 +19,7 @@ const CartSummary = ({ items }) => {
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="w-1/2 border border-[var(--border)] py-3 text-sm hover:bg-[var(--card-subtle)] transition"
+          className="w-1/2 border border-[var(--border)] py-3 text-sm text-[var(--text)] hover:bg-[var(--card-subtle)] transition"
         >
           Continue shopping
         </button>

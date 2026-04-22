@@ -14,7 +14,7 @@ import {
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import ProductHighlights from "../components/ProductHighlights";
 import { useCart } from "@/features/cart/hooks/useCart";
-import MiniCart from "@/components/cart/MiniCart";
+import MiniCart from "@/features/cart/components/MiniCart";
 
 const ProductDetail = () => {
   const { productId } = useParams();
@@ -108,8 +108,8 @@ const ProductDetail = () => {
     const response = await handleAddToCart({
       productId: product._id,
       variantId,
+      quantity,
       size,
-      variantData: variantId ? selectedVariant : null,
     });
 
     if (response?.success) {

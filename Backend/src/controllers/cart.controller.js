@@ -3,7 +3,7 @@ import productModel from "../models/product.model.js";
 import { stockOfVariant } from "../dao/product.dao.js";
 
 export const addToCart = async (req, res) => {
-  const { productId, variantId, quantity = 1 } = req.body;
+  const { productId, variantId, quantity = 1, size = null } = req.body;
   const userId = req.user._id;
 
   try {
@@ -16,12 +16,14 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    let variant = null;
+    let variantData = null;
 
     if (variantId) {
-      variant = product.variants.id(variantId);
+      variantData = product.variants?.find(
+        (v) => v._id.toString() === variantId
+      );
 
-      if (!variant) {
+      if (!variantData) {
         return res.status(404).json({
           message: "Variant not found",
           success: false,
@@ -29,7 +31,7 @@ export const addToCart = async (req, res) => {
       }
     }
 
-    const stock = variant
+    const stock = variantData
       ? await stockOfVariant(productId, variantId)
       : product.stock || 999;
 
@@ -42,14 +44,15 @@ export const addToCart = async (req, res) => {
 
     const cart =
       (await cartModel.findOne({ userId })) ||
-      (await cartModel.create({ userId }));
+      (await cartModel.create({ userId, items: [] }));
 
     const existingItem = cart.items.find(
       (item) =>
         item.product.toString() === productId &&
         (variantId
           ? item.variant?.toString() === variantId
-          : !item.variant),
+          : !item.variant) &&
+        item.size === size
     );
 
     if (existingItem) {
@@ -67,9 +70,7 @@ export const addToCart = async (req, res) => {
       existingItem.quantity += quantity;
       await cart.save();
 
-      const updatedCart = await cartModel
-        .findOne({ userId })
-        .populate("items.product");
+      const updatedCart = await cartModel.findOne({ userId });
 
       return res.status(200).json({
         message: "Cart updated successfully",
@@ -85,18 +86,31 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    cart.items.push({
+    const snapshot = {
       product: productId,
       variant: variantId || null,
-      quantity,
-      price: variant?.price || product.price,
-    });
 
+      name: product.name,
+
+      image:
+        variantData?.images?.[0]?.url ||
+        product.images?.[0]?.url ||
+        "",
+
+      size: size || null,
+
+      price: {
+        amount: variantData?.price?.amount ?? product.price?.amount,
+        currency: variantData?.price?.currency || product.price?.currency || "INR",
+      },
+
+      quantity,
+    };
+
+    cart.items.push(snapshot);
     await cart.save();
 
-    const updatedCart = await cartModel
-      .findOne({ userId })
-      .populate("items.product");
+    const updatedCart = await cartModel.findOne({ userId });
 
     return res.status(200).json({
       message: "Item added to cart successfully",
@@ -114,9 +128,7 @@ export const addToCart = async (req, res) => {
 
 export const getCart = async (req, res) => {
   try {
-    const cart = await cartModel
-      .findOne({ userId: req.user._id })
-      .populate("items.product");
+    const cart = await cartModel.findOne({ userId: req.user._id });
 
     if (!cart) {
       return res.status(200).json({
@@ -142,7 +154,7 @@ export const updateCartItemQuantity = async (req, res) => {
   const userId = req.user._id;
 
   try {
-    const cart = await cartModel.findOne({ userId }).populate("items.product");
+    const cart = await cartModel.findOne({ userId });
 
     if (!cart) {
       return res.status(404).json({
@@ -163,9 +175,7 @@ export const updateCartItemQuantity = async (req, res) => {
     item.quantity = quantity;
     await cart.save();
 
-    const updatedCart = await cartModel
-      .findOne({ userId })
-      .populate("items.product");
+    const updatedCart = await cartModel.findOne({ userId });
 
     return res.status(200).json({
       message: "Cart item updated successfully",
@@ -186,7 +196,7 @@ export const removeCartItem = async (req, res) => {
   const userId = req.user._id;
 
   try {
-    const cart = await cartModel.findOne({ userId }).populate("items.product");
+    const cart = await cartModel.findOne({ userId });
 
     if (!cart) {
       return res.status(404).json({
@@ -207,9 +217,7 @@ export const removeCartItem = async (req, res) => {
     item.deleteOne();
     await cart.save();
 
-    const updatedCart = await cartModel
-      .findOne({ userId })
-      .populate("items.product");
+    const updatedCart = await cartModel.findOne({ userId });
 
     return res.status(200).json({
       message: "Cart item removed successfully",
