@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Menu, ShoppingBag, X, Search } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -11,7 +11,6 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 
   const closeOverlays = () => {
     setSearchOpen(false);
@@ -54,14 +53,11 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
-    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
 
     window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleResize);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -109,29 +105,13 @@ const Navbar = () => {
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </Button>
 
-            <div className="hidden md:flex items-center gap-2">
-              <Button
-                type="button"
-                variant="ghost"
-                className={
-                  isActive
-                    ? "text-(--text) hover:bg-[var(--card-subtle)]"
-                    : "text-white hover:bg-white/10 hover:text-white"
-                }
-              >
+            <div className="hidden md:flex items-center gap-6">
+              <Link to="/category/tops" className="nav-link">
                 Tops
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                className={
-                  isActive
-                    ? "text-(--text) hover:bg-[var(--card-subtle)]"
-                    : "text-white hover:bg-white/10 hover:text-white"
-                }
-              >
+              </Link>
+              <Link to="/category/bottoms" className="nav-link">
                 Bottoms
-              </Button>
+              </Link>
             </div>
           </div>
 
@@ -149,85 +129,44 @@ const Navbar = () => {
           </div>
 
           {/* RIGHT */}
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              asChild
-              variant="ghost"
-              size="icon"
-              className={[
-                isActive
-                  ? "text-(--text) hover:bg-[var(--card-subtle)]"
-                  : "text-white hover:bg-white/10",
-                mobileMenuOpen
-                  ? "opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
-                  : "",
-              ].join(" ")}
-            >
-              <Link to="/cart">
-                <ShoppingBag size={18} />
-              </Link>
-            </Button>
-
-            <div className="hidden md:flex items-center gap-2">
-              {user ? (
-                <>
-                  {/* SELLER ONLY */}
-                  {user.role === "seller" && (
-                    <Button
-                      asChild
-                      variant="ghost"
-                      className={
-                        isActive
-                          ? "text-(--text) hover:bg-[var(--card-subtle)]"
-                          : "text-white hover:bg-white/10 hover:text-white"
-                      }
-                    >
-                      <Link to="/seller/dashboard">Dashboard</Link>
-                    </Button>
-                  )}
-
-                  {/* SEARCH */}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={
-                      isActive
-                        ? "text-(--text) hover:bg-[var(--card-subtle)]"
-                        : "text-white hover:bg-white/10"
-                    }
-                    onClick={openSearch}
-                  >
-                    <Search size={18} />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className={
-                      isActive
-                        ? "text-(--text) hover:bg-[var(--card-subtle)]"
-                        : "text-white hover:bg-white/10 hover:text-white"
-                    }
-                  >
-                    <Link to="/login">Login</Link>
-                  </Button>
-
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className={
-                      isActive
-                        ? "text-(--text) hover:bg-[var(--card-subtle)]"
-                        : "text-white hover:bg-white/10 hover:text-white"
-                    }
-                  >
-                    <Link to="/register">Register</Link>
-                  </Button>
-                </>
+          <div className="flex items-center justify-end gap-4 md:gap-6">
+            {/* MOBILE */}
+            <div className="flex items-center md:hidden">
+              {!mobileMenuOpen && (
+                <Link
+                  to="/cart"
+                  className={`nav-link ${isActive ? "text-(--text)" : "text-white"}`}
+                >
+                  Cart
+                </Link>
               )}
+            </div>
+
+            {/* DESKTOP */}
+            <div className="hidden md:flex items-center gap-6">
+              {user?.role === "seller" && (
+                <Link
+                  to="/seller/dashboard"
+                  className={`nav-link ${isActive ? "text-(--text)" : "text-white"}`}
+                >
+                  Dashboard
+                </Link>
+              )}
+
+              <button
+                type="button"
+                onClick={openSearch}
+                className={`nav-link ${isActive ? "text-(--text)" : "text-white"}`}
+              >
+                Search
+              </button>
+
+              <Link
+                to="/cart"
+                className={`nav-link ${isActive ? "text-(--text)" : "text-white"}`}
+              >
+                Cart
+              </Link>
             </div>
           </div>
         </div>
@@ -266,42 +205,63 @@ const Navbar = () => {
               className="mb-6 w-full border-b pb-2 outline-none placeholder:text-[var(--text-muted)]"
             />
 
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <p className="text-xs text-[var(--text-muted)]">Shop</p>
-                <p className="text-base text-(--text)">Tops</p>
-                <p className="text-base text-(--text)">Bottoms</p>
+            <div className="space-y-8 text-base">
+              <div className="space-y-4">
+                <p className="text-xs uppercase text-[var(--text-muted)] tracking-wide">
+                  Shop
+                </p>
+
+                <div className="flex flex-col gap-3">
+                  <Link to="/category/tops" className="nav-link">
+                    Tops
+                  </Link>
+                  <Link to="/category/bottoms" className="nav-link">
+                    Bottoms
+                  </Link>
+                </div>
               </div>
 
-              <div className="space-y-3 border-t pt-6">
-                <p className="text-xs text-[var(--text-muted)]">Navigation</p>
-                {user?.role === "seller" && (
+              <div className="space-y-4 border-t pt-6">
+                <p className="text-xs uppercase tracking-wide text-[var(--text-muted)]">
+                  Navigation
+                </p>
+
+                <div className="flex flex-col gap-3">
                   <Link
-                    to="/seller/dashboard"
-                    className="block text-base text-(--text)"
+                    to="/cart"
+                    className="nav-link text-(--text)"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Dashboard
+                    Cart
                   </Link>
-                )}
-                {!user && (
-                  <>
+                  {user?.role === "seller" && (
                     <Link
-                      to="/login"
-                      className="block text-base text-(--text)"
+                      to="/seller/dashboard"
+                      className="nav-link text-(--text)"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      Login
+                      Dashboard
                     </Link>
-                    <Link
-                      to="/register"
-                      className="block text-base text-(--text)"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Register
-                    </Link>
-                  </>
-                )}
+                  )}
+                  {!user && (
+                    <>
+                      <Link
+                        to="/login"
+                        className="nav-link text-(--text)"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="nav-link text-(--text)"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Register
+                      </Link>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -316,10 +276,7 @@ const Navbar = () => {
             className="h-full flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              className="absolute top-6 right-6"
-              onClick={closeOverlays}
-            >
+            <button className="absolute top-6 right-6" onClick={closeOverlays}>
               ✕
             </button>
 

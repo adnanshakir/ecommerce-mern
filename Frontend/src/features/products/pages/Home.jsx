@@ -24,13 +24,13 @@ const Home = () => {
           {/* mobile */}
           <source
             media="(max-width: 640px)"
-            srcSet="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80"
+            srcSet="https://plus.unsplash.com/premium_photo-1688497831503-235238709bd2?auto=format&fit=crop&w=600&q=80&crop=faces"
           />
 
           {/* tablet */}
           <source
             media="(max-width: 1024px)"
-            srcSet="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=80"
+            srcSet="https://images.unsplash.com/photo-1749222200222-93399b2b65dd?auto=format&fit=crop&w=1200&q=80"
           />
 
           {/* desktop */}
