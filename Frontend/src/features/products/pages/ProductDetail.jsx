@@ -14,6 +14,7 @@ import {
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import ProductHighlights from "../components/ProductHighlights";
 import { useCart } from "@/features/cart/hooks/useCart";
+import MiniCart from "@/components/cart/MiniCart";
 
 const ProductDetail = () => {
   const { productId } = useParams();
@@ -36,6 +37,7 @@ const ProductDetail = () => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState("M");
+  const [cartOpen, setCartOpen] = useState(false);
 
   const selectedVariant = allVariants[selectedVariantIndex];
   const displayImages = selectedVariant?.images?.length
@@ -101,6 +103,19 @@ const ProductDetail = () => {
     selectedVariant?._id && selectedVariant._id !== "base"
       ? selectedVariant._id
       : null;
+
+  const handleAdd = async () => {
+    const response = await handleAddToCart({
+      productId: product._id,
+      variantId,
+      size,
+      variantData: variantId ? selectedVariant : null,
+    });
+
+    if (response?.success) {
+      setCartOpen(true);
+    }
+  };
 
   return (
     <Layout>
@@ -270,12 +285,7 @@ const ProductDetail = () => {
             {/* ACTIONS */}
             <div className="flex flex-col gap-3 w-full py-3 text-base font-medium">
               <Button
-                onClick={() =>
-                  handleAddToCart({
-                    productId: product._id,
-                    variantId,
-                  })
-                }
+                onClick={handleAdd}
                 className="bg-[var(--primary-btn)] text-[var(--card)]"
               >
                 Add to cart
@@ -291,6 +301,8 @@ const ProductDetail = () => {
           </div>
         </div>
       </section>
+
+      <MiniCart open={cartOpen} onClose={() => setCartOpen(false)} />
     </Layout>
   );
 };

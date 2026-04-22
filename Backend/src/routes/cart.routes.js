@@ -1,7 +1,16 @@
 import express from "express";
 import { authenticateUser } from "../middleware/auth.middleware.js";
-import { validateAddToCart } from "../validator/cart.validator.js";
-import { addToCart, getCart } from "../controllers/cart.controller.js";
+import {
+  validateAddToCart,
+  validateRemoveCartItem,
+  validateUpdateCartItem,
+} from "../validator/cart.validator.js";
+import {
+  addToCart,
+  getCart,
+  removeCartItem,
+  updateCartItemQuantity,
+} from "../controllers/cart.controller.js";
 
 const  router = express.Router();
 
@@ -27,5 +36,29 @@ router.post(
 * @access Private
 */
 router.get("/", authenticateUser, getCart);
+
+/*
+ * @route PATCH /api/cart/item
+ * @desc Update cart item quantity
+ * @access Private
+ */
+router.patch(
+  "/item",
+  authenticateUser,
+  validateUpdateCartItem,
+  updateCartItemQuantity,
+);
+
+/*
+ * @route DELETE /api/cart/item
+ * @desc Remove item from cart
+ * @access Private
+ */
+router.delete(
+  "/item",
+  authenticateUser,
+  validateRemoveCartItem,
+  removeCartItem,
+);
 
 export default router;

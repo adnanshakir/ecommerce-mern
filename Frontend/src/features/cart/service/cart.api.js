@@ -18,3 +18,20 @@ export async function addToCart({ productId, variantId }) {
   });
   return response.data;
 }
+
+export async function updateCartItemQuantity({ itemId, quantity }) {
+  const response = await cartApi.patch("/item", {
+    itemId,
+    quantity,
+  });
+
+  return response.data;
+}
+
+export async function removeCartItem({ itemId }) {
+  const response = await cartApi.delete("/item", {
+    data: { itemId },
+  });
+
+  return response.data;
+}

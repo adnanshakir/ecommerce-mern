@@ -15,3 +15,16 @@ export const validateAddToCart = [
   body("quantity").optional().isInt({ min: 1 }).withMessage("Quantity must be a positive integer"),
   validateRequest,
 ];
+
+export const validateUpdateCartItem = [
+  body("itemId").isMongoId().withMessage("Invalid cart item ID"),
+  body("quantity")
+    .isInt({ min: 1 })
+    .withMessage("Quantity must be a positive integer"),
+  validateRequest,
+];
+
+export const validateRemoveCartItem = [
+  body("itemId").isMongoId().withMessage("Invalid cart item ID"),
+  validateRequest,
+];
