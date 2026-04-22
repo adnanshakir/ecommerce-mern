@@ -6,16 +6,16 @@ import { addToCart, getCart } from "../controllers/cart.controller.js";
 const  router = express.Router();
 
 /*
- * @route POST /api/cart/add/:productId/:variantId
+ * @route POST /api/cart/add
  * @desc Add item to cart
  * @access Private
  * @agruments:
- *   - productId: ID of the product to add
- *   - variantId: ID of the variant to add
- *   - quantity: Quantity to add (optional, default 1)
+ *   - productId: ID of the product to add (body)
+ *   - variantId: ID of the variant to add (optional, body)
+ *   - quantity: Quantity to add (optional, body, default 1)
  */
 router.post(
-  "/add/:productId/:variantId",
+  "/add",
   authenticateUser,
   validateAddToCart,
   addToCart,

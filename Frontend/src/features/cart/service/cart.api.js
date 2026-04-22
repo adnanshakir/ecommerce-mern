@@ -6,12 +6,14 @@ const cartApi = axios.create({
 });
 
 export async function getCartItems() {
-  const response = await cartApi.get("/", { withCredentials: true });
+  const response = await cartApi.get("/");
   return response.data;
 }
 
 export async function addToCart({ productId, variantId }) {
-  const response = await cartApi.post(`/add/${productId}/${variantId}`, {
+  const response = await cartApi.post(`/add`, {
+    productId,
+    variantId,
     quantity: 1,
   });
   return response.data;

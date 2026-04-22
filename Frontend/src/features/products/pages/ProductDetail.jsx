@@ -97,6 +97,10 @@ const ProductDetail = () => {
   }
 
   const amount = displayPrice;
+  const variantId =
+    selectedVariant?._id && selectedVariant._id !== "base"
+      ? selectedVariant._id
+      : null;
 
   return (
     <Layout>
@@ -269,10 +273,7 @@ const ProductDetail = () => {
                 onClick={() =>
                   handleAddToCart({
                     productId: product._id,
-                    variantId:
-                      selectedVariant._id === "base"
-                        ? product.variants?.[0]?._id
-                        : selectedVariant._id,
+                    variantId,
                   })
                 }
                 className="bg-[var(--primary-btn)] text-[var(--card)]"

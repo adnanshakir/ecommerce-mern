@@ -1,6 +1,6 @@
 import { addToCart, getCartItems } from "../service/cart.api";
 import { useDispatch } from "react-redux";
-import { addItem, setItems } from "../state/cart.slice";
+import { setItems } from "../state/cart.slice";
 
 export const useCart = () => {
   const dispatch = useDispatch();
@@ -8,7 +8,7 @@ export const useCart = () => {
   const handleAddToCart = async ({ productId, variantId }) => {
     try {
       const data = await addToCart({ productId, variantId });
-        dispatch(addItem(data.item));
+      dispatch(setItems(data.cart?.items || []));
 
       return data;
     } catch (error) {
@@ -19,7 +19,7 @@ export const useCart = () => {
   const handleGetCart = async () => {
     try {
       const data = await getCartItems();
-      dispatch(setItems(data.cart));
+      dispatch(setItems(data.cart?.items || []));
     } catch (error) {
       console.error("Failed to fetch cart items:", error);
     }

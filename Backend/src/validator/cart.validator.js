@@ -1,4 +1,4 @@
-import { body, param, validationResult } from "express-validator";
+import { body, validationResult } from "express-validator";
 
 
 const validateRequest = (req, res, next) => {
@@ -10,8 +10,8 @@ const validateRequest = (req, res, next) => {
 }
 
 export const validateAddToCart = [
-  param("productId").isMongoId().withMessage("Invalid product ID"),
-  param("variantId").optional().isMongoId().withMessage("Invalid variant ID"),
-    body("quantity").optional().isInt({ min: 1 }).withMessage("Quantity must be a positive integer"),
-    validateRequest
-]
+  body("productId").isMongoId().withMessage("Invalid product ID"),
+  body("variantId").optional({ nullable: true }).isMongoId().withMessage("Invalid variant ID"),
+  body("quantity").optional().isInt({ min: 1 }).withMessage("Quantity must be a positive integer"),
+  validateRequest,
+];

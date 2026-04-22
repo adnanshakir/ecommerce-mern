@@ -3,33 +3,39 @@ import productModel from "../models/product.model.js";
 import { stockOfVariant } from "../dao/product.dao.js";
 
 export const addToCart = async (req, res) => {
-  const { productId, variantId } = req.params;
-  const { quantity = 1 } = req.body;
+  const { productId, variantId, quantity = 1 } = req.body;
   const userId = req.user._id;
 
-  const product = await productModel.findOne({
-    _id: productId,
-    "variants._id": variantId,
-  });
-
-  if (!product) {
-    return res
-      .status(404)
-      .json({ message: "Product or variant not found", success: false });
-  }
-
-  const stock = await stockOfVariant(productId, variantId);
-
-  if (stock <= 0) {
-    return res
-      .status(400)
-      .json({ message: "Variant is out of stock", success: false });
-  }
-
   try {
-    if (!variantId || variantId === "base") {
+    const product = await productModel.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+        success: false,
+      });
+    }
+
+    let variant = null;
+
+    if (variantId) {
+      variant = product.variants.id(variantId);
+
+      if (!variant) {
+        return res.status(404).json({
+          message: "Variant not found",
+          success: false,
+        });
+      }
+    }
+
+    const stock = variant
+      ? await stockOfVariant(productId, variantId)
+      : product.stock || 999;
+
+    if (!stock || stock <= 0) {
       return res.status(400).json({
-        message: "Invalid variant",
+        message: "Out of stock",
         success: false,
       });
     }
@@ -41,7 +47,9 @@ export const addToCart = async (req, res) => {
     const existingItem = cart.items.find(
       (item) =>
         item.product.toString() === productId &&
-        item.variant?.toString() === variantId,
+        (variantId
+          ? item.variant?.toString() === variantId
+          : !item.variant),
     );
 
     if (existingItem) {
@@ -56,14 +64,16 @@ export const addToCart = async (req, res) => {
         });
       }
 
-      await cartModel.findOneAndUpdate(
-        { userId, "items.product": productId, "items.variant": variantId },
-        { $inc: { "items.$.quantity": quantity } },
-        { new: true },
-      );
+      existingItem.quantity += quantity;
+      await cart.save();
+
+      const updatedCart = await cartModel
+        .findOne({ userId })
+        .populate("items.product");
 
       return res.status(200).json({
         message: "Cart updated successfully",
+        cart: updatedCart,
         success: true,
       });
     }
@@ -75,19 +85,22 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    const variant = product.variants.id(variantId);
-
     cart.items.push({
       product: productId,
-      variant: variantId,
+      variant: variantId || null,
       quantity,
       price: variant?.price || product.price,
     });
 
     await cart.save();
 
+    const updatedCart = await cartModel
+      .findOne({ userId })
+      .populate("items.product");
+
     return res.status(200).json({
       message: "Item added to cart successfully",
+      cart: updatedCart,
       success: true,
     });
   } catch (error) {
@@ -100,15 +113,17 @@ export const addToCart = async (req, res) => {
 };
 
 export const getCart = async (req, res) => {
-  const user = req.user;
-
   try {
-    let cart = await cartModel.findOne({ user }).populate("items.product");
+    const cart = await cartModel
+      .findOne({ userId: req.user._id })
+      .populate("items.product");
 
     if (!cart) {
-      return res
-        .status(404)
-        .json({ message: "Cart not found", success: false });
+      return res.status(200).json({
+        message: "Cart fetched successfully",
+        cart: { items: [] },
+        success: true,
+      });
     }
 
     return res
