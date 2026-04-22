@@ -1,10 +1,20 @@
 import CartItem from "@/components/cart/CartItem";
+import { useNavigate } from "react-router";
 
 const CartList = ({ items, onIncrease, onDecrease, onRemove }) => {
+  const navigate = useNavigate();
+
   if (!items?.length) {
     return (
-      <div className="rounded border border-[var(--border)] bg-[var(--card)] p-6 text-sm text-[var(--text-muted)]">
-        Your cart is empty.
+      <div className="rounded border border-[var(--border)] bg-[var(--card)] p-6 text-center space-y-4">
+        <p className="text-sm text-[var(--text-muted)]">Your cart is empty.</p>
+
+        <button
+          onClick={() => navigate("/")}
+          className="border border-[var(--border)] px-5 py-2 text-sm text-[var(--text)] hover:bg-[var(--card-subtle)] transition"
+        >
+          Continue shopping
+        </button>
       </div>
     );
   }

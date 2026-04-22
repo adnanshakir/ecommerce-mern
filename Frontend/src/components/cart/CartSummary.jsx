@@ -5,18 +5,28 @@ const CartSummary = ({ items }) => {
   );
 
   return (
-    <div className="mt-10 border-t pt-6 space-y-3">
-      <div className="flex justify-between">
-        <p className="text-(--text)">Subtotal</p>
-        <p className="text-(--text)">₹{subtotal}</p>
+    <div className="mt-8 pt-6 space-y-4">
+      <div className="flex justify-end text-xl gap-2">
+        <p className="text-[var(--text)] font-semibold">Subtotal :</p>
+        <p className="text-[var(--text)]">₹{subtotal}</p>
       </div>
 
-      <button
-        type="button"
-        className="w-full bg-[var(--primary-btn)] py-3 text-sm text-[var(--card)]"
-      >
-        Checkout
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="w-1/2 border border-[var(--border)] py-3 text-sm hover:bg-[var(--card-subtle)] transition"
+        >
+          Continue shopping
+        </button>
+
+        <button
+          type="button"
+          className="w-1/2 bg-[var(--primary-btn)] py-3 text-sm text-[var(--card)]"
+        >
+          Checkout
+        </button>
+      </div>
 
       <p className="text-center text-xs text-[var(--text-muted)]">
         Taxes and shipping calculated at checkout

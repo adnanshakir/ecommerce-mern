@@ -44,7 +44,7 @@ const Cart = () => {
     <Layout>
       <section className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
         <p className="mb-2 text-xs text-[var(--text-muted)]">Home / Shopping cart</p>
-        <h1 className="mb-6 text-xl text-(--text)">Shopping cart</h1>
+        <h1 className="mb-6 text-xl font-bold text-(--text)">Shopping cart</h1>
 
         <CartList
           items={items}
