@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 const MiniCart = ({ open, onClose }) => {
   const items = useSelector((state) => state.cart.items);
+  const subtotal = useSelector((state) => state.cart.subtotal);
 
   useEffect(() => {
     if (!open) return;
@@ -20,11 +21,6 @@ const MiniCart = ({ open, onClose }) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [open, onClose]);
-
-  const subtotal = items.reduce(
-    (acc, item) => acc + (item?.price?.amount || 0) * (item?.quantity || 0),
-    0,
-  );
 
   return (
     <div
@@ -50,17 +46,22 @@ const MiniCart = ({ open, onClose }) => {
           {items.length ? (
             <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
               {items.map((item, index) => (
-                <div
-                  key={item?._id || `item-${index}`}
-                  className="flex gap-3"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name || "Cart item"}
-                    className="h-20 w-16 object-cover"
-                  />
+                <div key={item?._id || `item-${index}`} className="flex gap-3">
+                  {item.product?.images?.[0]?.url ? (
+                    <img
+                      src={item.product.images[0].url}
+                      alt={item.product?.name || "Cart item"}
+                      className="h-20 w-16 object-cover"
+                    />
+                  ) : (
+                    <div className="h-20 w-16 bg-[var(--card-subtle)] text-[10px] text-[var(--text-muted)] flex items-center justify-center">
+                      No image
+                    </div>
+                  )}
                   <div>
-                    <p className="text-sm text-(--text)">{item.name}</p>
+                    <p className="text-sm text-(--text)">
+                      {item.product?.name || "Product unavailable"}
+                    </p>
                     {item.size && (
                       <p className="text-xs text-[var(--text-muted)]">
                         Size: {item.size}
@@ -70,7 +71,7 @@ const MiniCart = ({ open, onClose }) => {
                       Qty: {item?.quantity || 0}
                     </p>
                     <p className="text-sm text-(--text)">
-                      ₹{item?.price?.amount || 0}
+                      ₹{item?.currentPrice || item?.price?.amount || 0}
                     </p>
                   </div>
                 </div>

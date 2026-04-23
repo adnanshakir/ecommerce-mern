@@ -4,6 +4,7 @@ import { useCart } from "../hooks/useCart";
 import Layout from "@/components/layout/Layout";
 import CartList from "@/features/cart/components/CartList";
 import CartSummary from "@/features/cart/components/CartSummary";
+import toast from "react-hot-toast";
 
 const Cart = () => {
   const items = useSelector((state) => state.cart.items);
@@ -11,30 +12,48 @@ const Cart = () => {
     useCart();
 
   useEffect(() => {
-    handleGetCart();
+    handleGetCart().catch(() => {
+      toast.error("Failed to load cart");
+    });
   }, []);
 
-  const handleIncrease = (item) => {
-    handleUpdateCartQuantity({
-      itemId: item._id,
-      quantity: item.quantity + 1,
-    });
+  const handleIncrease = async (item) => {
+    try {
+      await handleUpdateCartQuantity({
+        itemId: item._id,
+        quantity: item.quantity + 1,
+      });
+    } catch {
+      toast.error("Failed to update quantity");
+    }
   };
 
-  const handleDecrease = (item) => {
+  const handleDecrease = async (item) => {
     if (item.quantity === 1) {
-      handleRemoveFromCart({ itemId: item._id });
+      try {
+        await handleRemoveFromCart({ itemId: item._id });
+      } catch {
+        toast.error("Failed to remove item");
+      }
       return;
     }
 
-    handleUpdateCartQuantity({
-      itemId: item._id,
-      quantity: item.quantity - 1,
-    });
+    try {
+      await handleUpdateCartQuantity({
+        itemId: item._id,
+        quantity: item.quantity - 1,
+      });
+    } catch {
+      toast.error("Failed to update quantity");
+    }
   };
 
-  const handleRemove = (item) => {
-    handleRemoveFromCart({ itemId: item._id });
+  const handleRemove = async (item) => {
+    try {
+      await handleRemoveFromCart({ itemId: item._id });
+    } catch {
+      toast.error("Failed to remove item");
+    }
   };
 
   return (
@@ -52,7 +71,7 @@ const Cart = () => {
           onRemove={handleRemove}
         />
 
-        {items.length > 0 && <CartSummary items={items} />}
+        {items.length > 0 && <CartSummary />}
       </section>
     </Layout>
   );

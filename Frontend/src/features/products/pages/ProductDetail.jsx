@@ -39,7 +39,7 @@ const ProductDetail = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState("");
+  const [size, setSize] = useState("M");
   const [loading, setLoading] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -73,7 +73,7 @@ const ProductDetail = () => {
     setActiveIndex(0);
     setSelectedVariantIndex(0);
     setQuantity(1);
-    setSize("");
+    setSize("M");
   }, [productId]);
 
   useEffect(() => {
@@ -131,12 +131,13 @@ const ProductDetail = () => {
         variantId,
         quantity,
         size,
+        requiresSize: true,
       });
       if (response?.success) {
         setCartOpen(true);
       }
-    } catch {
-      toast.error("Failed to add to cart");
+    } catch (error) {
+      toast.error(error?.message || "Failed to add to cart");
     } finally {
       setLoading(false);
     }
@@ -164,14 +165,15 @@ const ProductDetail = () => {
         variantId,
         quantity,
         size,
+        requiresSize: true,
       });
       if (response?.success) {
         navigate("/cart");
       } else {
         toast.error("Something went wrong");
       }
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -298,10 +300,12 @@ const ProductDetail = () => {
               <p className="text-xs uppercase tracking-[0.08em] text-[var(--text-secondary)]">
                 Size
               </p>
-              <Select value={size} onValueChange={setSize}>
+
+              <Select value={size || "M"} onValueChange={setSize}>
                 <SelectTrigger className="w-36 border-[var(--border)] bg-[var(--card)] text-(--text)">
                   <SelectValue placeholder="Select size" />
                 </SelectTrigger>
+
                 <SelectContent>
                   {["XS", "S", "M", "L", "XL"].map((option) => (
                     <SelectItem key={option} value={option}>
@@ -352,7 +356,11 @@ const ProductDetail = () => {
                 {loading ? "Adding..." : "Add to cart"}
               </Button>
 
-              <Button variant="outline" onClick={handleBuyNow} disabled={loading}>
+              <Button
+                variant="outline"
+                onClick={handleBuyNow}
+                disabled={loading}
+              >
                 {loading ? "Processing..." : "Buy now"}
               </Button>
             </div>

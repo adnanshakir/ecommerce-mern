@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setError } from "../../auth/state/auth.slice";
 import { useNavigate } from "react-router";
 import { useProduct } from "../hooks/useProduct";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { NAV_ITEMS } from "@/app/nav.config";
 import {
   Card,
@@ -22,7 +22,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import ImageUploader from "../components/ImageUploader";
 

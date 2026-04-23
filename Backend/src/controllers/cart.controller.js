@@ -2,6 +2,46 @@ import cartModel from "../models/cart.model.js";
 import productModel from "../models/product.model.js";
 import { stockOfVariant } from "../dao/product.dao.js";
 
+const buildCartPayload = async (userId) => {
+  const cart = await cartModel
+    .findOne({ userId })
+    .populate("items.product", "name price images");
+
+  if (!cart) {
+    return {
+      cart: { items: [] },
+      subtotal: 0,
+    };
+  }
+
+  const updatedItems = cart.items.map((item) => {
+    const originalPrice = item.price?.amount || 0;
+    const parsedCurrentPrice = Number(item.product?.price?.amount);
+    const currentPrice = Number.isFinite(parsedCurrentPrice)
+      ? parsedCurrentPrice
+      : originalPrice;
+
+    return {
+      ...item.toObject(),
+      currentPrice,
+    };
+  });
+
+  const subtotal = updatedItems.reduce(
+    (acc, item) =>
+      acc + (item.currentPrice ?? item.price?.amount ?? 0) * (item.quantity || 0),
+    0,
+  );
+
+  return {
+    cart: {
+      ...cart.toObject(),
+      items: updatedItems,
+    },
+    subtotal,
+  };
+};
+
 export const addToCart = async (req, res) => {
   const { productId, variantId, quantity = 1, size = null } = req.body;
   const userId = req.user._id;
@@ -20,7 +60,7 @@ export const addToCart = async (req, res) => {
 
     if (variantId) {
       variantData = product.variants?.find(
-        (v) => v._id.toString() === variantId
+        (v) => v._id.toString() === variantId,
       );
 
       if (!variantData) {
@@ -49,10 +89,8 @@ export const addToCart = async (req, res) => {
     const existingItem = cart.items.find(
       (item) =>
         item.product.toString() === productId &&
-        (variantId
-          ? item.variant?.toString() === variantId
-          : !item.variant) &&
-        item.size === size
+        (variantId ? item.variant?.toString() === variantId : !item.variant) &&
+        item.size === size,
     );
 
     if (existingItem) {
@@ -69,12 +107,12 @@ export const addToCart = async (req, res) => {
 
       existingItem.quantity += quantity;
       await cart.save();
-
-      const updatedCart = await cartModel.findOne({ userId });
+      const payload = await buildCartPayload(userId);
 
       return res.status(200).json({
         message: "Cart updated successfully",
-        cart: updatedCart,
+        cart: payload.cart,
+        subtotal: payload.subtotal,
         success: true,
       });
     }
@@ -89,32 +127,22 @@ export const addToCart = async (req, res) => {
     const snapshot = {
       product: productId,
       variant: variantId || null,
-
-      name: product.name,
-
-      image:
-        variantData?.images?.[0]?.url ||
-        product.images?.[0]?.url ||
-        "",
-
       size: size || null,
-
       price: {
-        amount: variantData?.price?.amount ?? product.price?.amount,
-        currency: variantData?.price?.currency || product.price?.currency || "INR",
+        amount: product.price?.amount || 0,
+        currency: product.price?.currency || "INR",
       },
-
       quantity,
     };
 
     cart.items.push(snapshot);
     await cart.save();
-
-    const updatedCart = await cartModel.findOne({ userId });
+    const payload = await buildCartPayload(userId);
 
     return res.status(200).json({
       message: "Item added to cart successfully",
-      cart: updatedCart,
+      cart: payload.cart,
+      subtotal: payload.subtotal,
       success: true,
     });
   } catch (error) {
@@ -128,24 +156,21 @@ export const addToCart = async (req, res) => {
 
 export const getCart = async (req, res) => {
   try {
-    const cart = await cartModel.findOne({ userId: req.user._id });
+    const user = req.user;
+    const payload = await buildCartPayload(user._id);
 
-    if (!cart) {
-      return res.status(200).json({
-        message: "Cart fetched successfully",
-        cart: { items: [] },
-        success: true,
-      });
-    }
-
-    return res
-      .status(200)
-      .json({ message: "Cart fetched successfully", cart, success: true });
+    return res.status(200).json({
+      message: "Cart fetched successfully",
+      cart: payload.cart,
+      subtotal: payload.subtotal,
+      success: true,
+    });
   } catch (error) {
     console.error("Error fetching cart:", error);
-    return res
-      .status(500)
-      .json({ message: "Internal server error", success: false });
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 };
 
@@ -174,12 +199,12 @@ export const updateCartItemQuantity = async (req, res) => {
 
     item.quantity = quantity;
     await cart.save();
-
-    const updatedCart = await cartModel.findOne({ userId });
+    const payload = await buildCartPayload(userId);
 
     return res.status(200).json({
       message: "Cart item updated successfully",
-      cart: updatedCart,
+      cart: payload.cart,
+      subtotal: payload.subtotal,
       success: true,
     });
   } catch (error) {
@@ -216,12 +241,12 @@ export const removeCartItem = async (req, res) => {
 
     item.deleteOne();
     await cart.save();
-
-    const updatedCart = await cartModel.findOne({ userId });
+    const payload = await buildCartPayload(userId);
 
     return res.status(200).json({
       message: "Cart item removed successfully",
-      cart: updatedCart || { items: [] },
+      cart: payload.cart,
+      subtotal: payload.subtotal,
       success: true,
     });
   } catch (error) {

@@ -9,22 +9,25 @@ const Products = () => {
   const navigate = useNavigate();
   const category = searchParams.get("category");
   const sub = searchParams.get("sub");
+  const q = searchParams.get("q") || "";
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    getAllProducts({ category, sub })
+    getAllProducts({ category, sub, q })
       .then((data) => setProducts(data.products || []))
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [category, sub]);
+  }, [category, sub, q]);
 
   // derive heading from config
   const navItem = NAV_ITEMS.find((n) => n.category === category);
   const subItem = navItem?.items.find((i) => i.sub === sub);
-  const heading = subItem?.label || navItem?.label || "All Products";
+  const heading = q
+    ? `Results for "${q}"`
+    : subItem?.label || navItem?.label || "All Products";
 
   return (
     <Layout>
@@ -32,6 +35,7 @@ const Products = () => {
         <p className="mb-2 text-xs text-[var(--text-muted)]">
           Home{category ? ` / ${navItem?.label || category}` : ""}
           {sub ? ` / ${subItem?.label || sub}` : ""}
+          {q ? ` / Search` : ""}
         </p>
         <h1 className="mb-8 text-xl font-bold text-(--text)">{heading}</h1>
 
@@ -48,7 +52,9 @@ const Products = () => {
             <p className="text-sm text-[var(--text-muted)]">
               {category
                 ? `Nothing in "${subItem?.label || navItem?.label || category}" yet — check back soon.`
-                : "No products are available right now."}
+                : q
+                  ? `No results for "${q}".`
+                  : "No products are available right now."}
             </p>
           </div>
         )}

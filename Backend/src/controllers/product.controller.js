@@ -6,6 +6,9 @@ const VALID_SUBCATEGORIES = {
   bottoms: ["jeans", "trousers"],
 };
 
+const escapeRegExp = (value = "") =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export async function createProduct(req, res) {
   try {
     const {
@@ -43,8 +46,10 @@ export async function createProduct(req, res) {
       });
     }
 
+    const normalizedName = name?.trim();
+
     const exists = await productModel.findOne({
-      name,
+      name: { $regex: new RegExp(`^${escapeRegExp(normalizedName)}$`, "i") },
       seller: sellerId,
       category: normCategory,
       subCategory: normSubCategory,
@@ -77,7 +82,7 @@ export async function createProduct(req, res) {
       : [];
 
     const product = await productModel.create({
-      name,
+      name: normalizedName,
       description,
       price: {
         amount: Math.round(Number(priceAmount)),
@@ -89,7 +94,11 @@ export async function createProduct(req, res) {
       subCategory: normSubCategory,
     });
 
-    res.status(201).json(product);
+    res.status(201).json({
+      message: "Product created successfully",
+      success: true,
+      product,
+    });
   } catch (error) {
     console.error("Error creating product:", error);
     res.status(500).json({
@@ -121,11 +130,12 @@ export async function getSellerProducts(req, res) {
 
 export async function getAllProducts(req, res) {
   try {
-    const { category, sub } = req.query;
+    const { category, sub, q } = req.query;
 
     const filter = {
       ...(category && { category }),
       ...(sub && { subCategory: sub }),
+      ...(q?.trim() && { name: { $regex: q.trim(), $options: "i" } }),
     };
 
     const products = await productModel.find(filter);
@@ -265,7 +275,7 @@ export async function addProductVariant(req, res) {
 
 export async function searchProducts(req, res) {
   try {
-    const { q } = req.query;
+    const { q, category } = req.query;
 
     if (!q || !q.trim()) {
       return res.status(200).json({ products: [] });
@@ -274,6 +284,7 @@ export async function searchProducts(req, res) {
     const products = await productModel
       .find({
         name: { $regex: q.trim(), $options: "i" },
+        ...(category ? { category } : {}),
       })
       .limit(10)
       .select("name images price category");

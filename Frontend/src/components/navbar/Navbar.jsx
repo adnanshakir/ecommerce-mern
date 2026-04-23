@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS } from "@/app/nav.config";
 import { searchProducts } from "@/features/products/services/product.api";

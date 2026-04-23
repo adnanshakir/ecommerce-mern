@@ -15,10 +15,11 @@ export async function getSellerProducts() {
   return response.data;
 }
 
-export async function getAllProducts({ category, sub } = {}) {
+export async function getAllProducts({ category, sub, q } = {}) {
   const params = new URLSearchParams();
   if (category) params.append("category", category);
   if (sub) params.append("sub", sub);
+  if (q) params.append("q", q);
 
   const query = params.toString();
   const response = await productApi.get(query ? `/?${query}` : "/");
@@ -51,7 +52,13 @@ export async function addProductVariant(productId, newProductVariant) {
   return response.data;
 }
 
-export async function searchProducts(query) {
-  const response = await productApi.get(`/search?q=${encodeURIComponent(query)}`);
+export async function searchProducts(query, category) {
+  const params = new URLSearchParams({ q: query });
+
+  if (category) {
+    params.set("category", category);
+  }
+
+  const response = await productApi.get(`/search?${params.toString()}`);
   return response.data;
 }

@@ -18,7 +18,7 @@ export const useProduct = () => {
   async function handleCreateProduct(formData) {
     try {
       const data = await createProduct(formData);
-      return data.product;
+      return data.product || data;
     } catch (error) {
       console.error("Error creating product:", error);
       throw error;

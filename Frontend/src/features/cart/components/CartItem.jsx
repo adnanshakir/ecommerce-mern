@@ -1,11 +1,27 @@
 import { Trash2 } from "lucide-react";
 
 const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
-  const imageUrl = item.image;
-  const name = item.name;
-  const price = item.price?.amount || 0;
+  const imageUrl = item.product?.images?.[0]?.url;
+  const name = item.product?.name || "Product unavailable";
+  const originalPrice = Number(item.price?.amount) || 0;
+  const currentPrice = Number(item.currentPrice) || originalPrice;
+  const hasDiscount = originalPrice > 0 && currentPrice < originalPrice;
+  const discountPercent = hasDiscount
+    ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
+    : 0;
+  const total = currentPrice * (Number(item.quantity) || 0);
   const size = item.size;
-  const total = price * (item.quantity || 0);
+
+  const ProductImage = ({ className }) =>
+    imageUrl ? (
+      <img src={imageUrl} alt={name || "Cart product"} className={className} />
+    ) : (
+      <div
+        className={`${className} flex items-center justify-center bg-[var(--card-subtle)] text-[10px] text-[var(--text-muted)]`}
+      >
+        No image
+      </div>
+    );
 
   const QtyControls = () => (
     <div className="flex items-center border border-[var(--border)]">
@@ -31,11 +47,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
     <div className="border-b border-[var(--border)] py-6">
       {/* ── MOBILE LAYOUT ── */}
       <div className="flex gap-4 md:hidden">
-        <img
-          src={imageUrl}
-          alt={name || "Cart product"}
-          className="w-20 h-24 object-cover shrink-0"
-        />
+        <ProductImage className="w-20 h-24 object-cover shrink-0" />
 
         <div className="flex-1 flex flex-col justify-between">
           {/* Name + remove */}
@@ -61,9 +73,33 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
           </div>
 
           {/* Price · Qty · Total — single row */}
+          {/* Price · Qty · Total */}
           <div className="flex items-center justify-between mt-3">
-            <p className="text-sm text-[var(--text-muted)]">₹{price}</p>
+            {/* Price */}
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-(--text)">
+                  ₹{currentPrice}
+                </span>
+
+                {hasDiscount && (
+                  <span className="text-xs line-through text-[var(--text-muted)]">
+                    ₹{originalPrice}
+                  </span>
+                )}
+              </div>
+
+              {hasDiscount && (
+                <span className="text-xs text-green-600 font-medium">
+                  {discountPercent}% OFF
+                </span>
+              )}
+            </div>
+
+            {/* Qty */}
             <QtyControls />
+
+            {/* Total */}
             <p className="text-sm font-medium text-(--text)">₹{total}</p>
           </div>
         </div>
@@ -73,11 +109,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
       <div className="hidden md:flex md:items-center md:justify-between gap-6">
         {/* Left — image + info */}
         <div className="flex gap-4">
-          <img
-            src={imageUrl}
-            alt={name || "Cart product"}
-            className="w-20 h-24 object-cover shrink-0"
-          />
+          <ProductImage className="w-20 h-24 object-cover shrink-0" />
           <div className="space-y-1">
             <p className="text-base font-medium leading-tight text-(--text)">
               {name}
@@ -98,8 +130,30 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
 
         {/* Right — price / qty / total */}
         <div className="flex items-center gap-8">
-          <p className="w-16 text-center text-sm text-(--text)">₹{price}</p>
+          {/* Price block */}
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-(--text)">
+                ₹{currentPrice}
+              </span>
+
+              {hasDiscount && (
+                <>
+                  <span className="text-xs line-through text-[var(--text-muted)]">
+                    ₹{originalPrice}
+                  </span>
+                  <span className="text-xs text-green-600 font-medium">
+                    {discountPercent}% OFF
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Qty */}
           <QtyControls />
+
+          {/* Total */}
           <p className="w-20 text-right text-sm font-medium text-(--text)">
             ₹{total}
           </p>

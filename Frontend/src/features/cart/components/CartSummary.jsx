@@ -1,12 +1,9 @@
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
-const CartSummary = ({ items }) => {
+const CartSummary = () => {
   const navigate = useNavigate();
-
-  const subtotal = items.reduce(
-    (acc, item) => acc + (item?.price?.amount || 0) * (item?.quantity || 0),
-    0,
-  );
+  const subtotal = useSelector((state) => state.cart.subtotal);
 
   return (
     <div className="mt-8 pt-6 space-y-4">
