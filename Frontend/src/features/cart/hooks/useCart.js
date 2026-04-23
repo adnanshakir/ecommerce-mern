@@ -17,6 +17,7 @@ export const useCart = () => {
       return data;
     } catch (error) {
       console.error("Failed to add item to cart:", error);
+      throw error;
     }
   };
 

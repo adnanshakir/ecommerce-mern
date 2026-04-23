@@ -40,7 +40,17 @@ const Products = () => {
         )}
 
         {!loading && !products.length && (
-          <p className="text-sm text-[var(--text-muted)]">No products found.</p>
+          <div className="flex flex-col items-center justify-center py-20 text-center gap-3">
+            <div className="w-14 h-14 rounded-full bg-[var(--card-subtle)] flex items-center justify-center text-2xl">
+              🛍️
+            </div>
+            <p className="text-base font-medium text-(--text)">No products found</p>
+            <p className="text-sm text-[var(--text-muted)]">
+              {category
+                ? `Nothing in "${subItem?.label || navItem?.label || category}" yet — check back soon.`
+                : "No products are available right now."}
+            </p>
+          </div>
         )}
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

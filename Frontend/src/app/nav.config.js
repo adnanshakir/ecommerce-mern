@@ -13,7 +13,6 @@ export const NAV_ITEMS = [
     items: [
       { label: "T-Shirts", sub: "tshirts" },
       { label: "Shirts", sub: "shirts" },
-      { label: "Hoodies", sub: "hoodies" },
       { label: "Tanks", sub: "tanks" },
     ],
   },
@@ -23,7 +22,6 @@ export const NAV_ITEMS = [
     items: [
       { label: "Jeans", sub: "jeans" },
       { label: "Trousers", sub: "trousers" },
-      { label: "Shorts", sub: "shorts" },
     ],
   },
 ];

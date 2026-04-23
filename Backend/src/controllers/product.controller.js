@@ -1,6 +1,11 @@
 import { uploadFile } from "../services/storage.service.js";
 import productModel from "../models/product.model.js";
 
+const VALID_SUBCATEGORIES = {
+  tops: ["tshirts", "shirts", "tanks"],
+  bottoms: ["jeans", "trousers"],
+};
+
 export async function createProduct(req, res) {
   try {
     const {
@@ -13,7 +18,37 @@ export async function createProduct(req, res) {
     } = req.body;
     const sellerId = req.user._id;
 
-    const exists = await productModel.findOne({ name, seller: sellerId });
+    /* ── Validate category / subCategory ── */
+    const normCategory = category?.toLowerCase().trim();
+    const normSubCategory = subCategory?.toLowerCase().trim();
+
+    if (!normCategory || !VALID_SUBCATEGORIES[normCategory]) {
+      return res.status(400).json({
+        message:
+          "Invalid category. Must be one of: " +
+          Object.keys(VALID_SUBCATEGORIES).join(", "),
+        field: "category",
+        success: false,
+      });
+    }
+
+    if (
+      !normSubCategory ||
+      !VALID_SUBCATEGORIES[normCategory].includes(normSubCategory)
+    ) {
+      return res.status(400).json({
+        message: `Invalid subCategory for "${normCategory}". Must be one of: ${VALID_SUBCATEGORIES[normCategory].join(", ")}`,
+        field: "subCategory",
+        success: false,
+      });
+    }
+
+    const exists = await productModel.findOne({
+      name,
+      seller: sellerId,
+      category: normCategory,
+      subCategory: normSubCategory,
+    });
 
     if (exists) {
       return res.status(400).json({
@@ -22,28 +57,36 @@ export async function createProduct(req, res) {
       });
     }
 
-    const images = await Promise.all(
-      req.files.map(async (file) => {
-        return await uploadFile({
-          buffer: file.buffer,
-          fileName: file.originalname,
-          folder: "E-commerce",
-        });
-      }),
-    );
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        message: "At least one product image is required",
+        success: false,
+      });
+    }
 
+    const images = req.files?.length
+      ? await Promise.all(
+          req.files.map((file) =>
+            uploadFile({
+              buffer: file.buffer,
+              fileName: file.originalname,
+              folder: "E-commerce",
+            }),
+          ),
+        )
+      : [];
 
     const product = await productModel.create({
       name,
       description,
       price: {
-        amount: priceAmount,
+        amount: Math.round(Number(priceAmount)),
         currency: priceCurrency || "INR",
       },
       images,
       seller: sellerId,
-      category: category?.toLowerCase().trim(),
-      subCategory: subCategory?.toLowerCase().trim(),
+      category: normCategory,
+      subCategory: normSubCategory,
     });
 
     res.status(201).json(product);
@@ -159,8 +202,12 @@ export async function addProductVariant(req, res) {
       ? JSON.parse(req.body.attributes)
       : {};
 
+    const parsedVariantPriceAmount = Number(priceAmount);
+
     const finalPrice = {
-      amount: priceAmount || product.price.amount,
+      amount: Number.isFinite(parsedVariantPriceAmount)
+        ? Math.round(parsedVariantPriceAmount)
+        : product.price.amount,
       currency: priceCurrency || product.price.currency || "INR",
     };
 

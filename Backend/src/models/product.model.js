@@ -16,12 +16,15 @@ const productSchema = new mongoose.Schema(
       required: true,
       lowercase: true,
       trim: true,
+      enum: ["tops", "bottoms"],
     },
+
     subCategory: {
       type: String,
+      required: true,
       lowercase: true,
       trim: true,
-      required: true,
+      enum: ["tshirts", "shirts", "tanks", "jeans", "trousers"],
     },
     price: {
       type: priceSchema,

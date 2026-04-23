@@ -1,4 +1,4 @@
-import Navbar from "@/components/layout/Navbar";
+import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useEffect } from "react";
 import { useLocation } from "react-router";

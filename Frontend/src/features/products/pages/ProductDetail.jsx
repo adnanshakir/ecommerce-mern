@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { useProduct } from "../hooks/useProduct";
 import Layout from "@/components/layout/Layout";
@@ -15,12 +15,15 @@ import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import ProductHighlights from "../components/ProductHighlights";
 import { useCart } from "@/features/cart/hooks/useCart";
 import MiniCart from "@/features/cart/components/MiniCart";
+import toast from "react-hot-toast";
 
 const ProductDetail = () => {
   const { productId } = useParams();
+  const navigate = useNavigate();
   const { handleGetProductDetails } = useProduct();
   const { handleAddToCart } = useCart();
   const product = useSelector((state) => state.product.productDetails);
+  const user = useSelector((state) => state.auth.user);
   const allVariants = useMemo(
     () => [
       {
@@ -36,7 +39,8 @@ const ProductDetail = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState("M");
+  const [size, setSize] = useState("");
+  const [loading, setLoading] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
   const selectedVariant = allVariants[selectedVariantIndex];
@@ -69,6 +73,7 @@ const ProductDetail = () => {
     setActiveIndex(0);
     setSelectedVariantIndex(0);
     setQuantity(1);
+    setSize("");
   }, [productId]);
 
   useEffect(() => {
@@ -105,15 +110,70 @@ const ProductDetail = () => {
       : null;
 
   const handleAdd = async () => {
-    const response = await handleAddToCart({
-      productId: product._id,
-      variantId,
-      quantity,
-      size,
-    });
+    if (!user) {
+      toast.error("Please login first");
+      navigate("/login");
+      return;
+    }
 
-    if (response?.success) {
-      setCartOpen(true);
+    if (!size) {
+      toast.error("Select size");
+      return;
+    }
+
+    if (loading) return;
+
+    setLoading(true);
+
+    try {
+      const response = await handleAddToCart({
+        productId: product._id,
+        variantId,
+        quantity,
+        size,
+      });
+      if (response?.success) {
+        setCartOpen(true);
+      }
+    } catch {
+      toast.error("Failed to add to cart");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!user) {
+      toast.error("Please login first");
+      navigate("/login");
+      return;
+    }
+
+    if (!size) {
+      toast.error("Select size");
+      return;
+    }
+
+    if (loading) return;
+
+    setLoading(true);
+
+    try {
+      const response = await handleAddToCart({
+        productId: product._id,
+        variantId,
+        quantity,
+        size,
+      });
+      if (response?.success) {
+        navigate("/cart");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -286,12 +346,15 @@ const ProductDetail = () => {
             <div className="flex flex-col gap-3 w-full py-3 text-base font-medium">
               <Button
                 onClick={handleAdd}
+                disabled={loading}
                 className="bg-[var(--primary-btn)] text-[var(--card)]"
               >
-                Add to cart
+                {loading ? "Adding..." : "Add to cart"}
               </Button>
 
-              <Button variant="outline">Buy now</Button>
+              <Button variant="outline" onClick={handleBuyNow} disabled={loading}>
+                {loading ? "Processing..." : "Buy now"}
+              </Button>
             </div>
 
             {/* INFO */}

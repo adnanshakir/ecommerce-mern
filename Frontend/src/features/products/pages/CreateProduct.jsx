@@ -5,6 +5,7 @@ import { setError } from "../../auth/state/auth.slice";
 import { useNavigate } from "react-router";
 import { useProduct } from "../hooks/useProduct";
 import { Button } from "@/components/ui/button";
+import { NAV_ITEMS } from "@/app/nav.config";
 import {
   Card,
   CardContent,
@@ -80,6 +81,8 @@ const CreateProduct = () => {
     description: "",
     price: "",
     currency: "INR",
+    category: "",
+    subCategory: "",
   });
   const [images, setImages] = useState([]);
   const [errors, setErrors] = useState({});
@@ -88,7 +91,8 @@ const CreateProduct = () => {
   /* ── Handlers ── */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const extra = name === "category" ? { subCategory: "" } : {};
+    setForm((prev) => ({ ...prev, [name]: value, ...extra }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
     if (reduxError) dispatch(setError(null));
   };
@@ -114,6 +118,9 @@ const CreateProduct = () => {
     } else if (isNaN(Number(form.price)) || Number(form.price) <= 0) {
       newErrors.price = "Enter a valid price.";
     }
+    if (!form.category) newErrors.category = "Please select a category.";
+    if (!form.subCategory)
+      newErrors.subCategory = "Please select a subcategory.";
     if (images.length === 0) {
       newErrors.images = "Add at least one product image.";
     } else if (images.length > MAX_FILES) {
@@ -144,8 +151,10 @@ const CreateProduct = () => {
       const formData = new FormData();
       formData.append("name", form.name.trim());
       formData.append("description", form.description.trim());
-      formData.append("priceAmount", form.price);
+      formData.append("priceAmount", Math.round(Number(form.price)));
       formData.append("priceCurrency", form.currency);
+      formData.append("category", form.category);
+      formData.append("subCategory", form.subCategory);
       images.forEach((img) => formData.append("images", img));
 
       await handleCreateProduct(formData);
@@ -287,6 +296,74 @@ const CreateProduct = () => {
                 </div>
               </section>
 
+              {/* ── Category section ── */}
+              <section className="space-y-4">
+                <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">
+                  Category
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Category selector */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="category" className={fieldLabelCls}>
+                      Category
+                    </Label>
+                    <select
+                      id="category"
+                      name="category"
+                      value={form.category}
+                      onChange={handleChange}
+                      aria-invalid={!!errors.category}
+                      className={[
+                        fieldCls(!!errors.category),
+                        "w-full px-3 cursor-pointer",
+                      ].join(" ")}
+                    >
+                      <option value="">Select category</option>
+                      {NAV_ITEMS.map((c) => (
+                        <option key={c.category} value={c.category}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                    <FieldError id="category-error" message={errors.category} />
+                  </div>
+
+                  {/* SubCategory selector — only shown once category chosen */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="subCategory" className={fieldLabelCls}>
+                      Subcategory
+                    </Label>
+                    <select
+                      id="subCategory"
+                      name="subCategory"
+                      value={form.subCategory}
+                      onChange={handleChange}
+                      disabled={!form.category}
+                      aria-invalid={!!errors.subCategory}
+                      className={[
+                        fieldCls(!!errors.subCategory),
+                        "w-full px-3 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed",
+                      ].join(" ")}
+                    >
+                      <option value="">Select subcategory</option>
+                      {NAV_ITEMS.find(
+                        (c) => c.category === form.category,
+                      )?.items.map((item) => (
+                        <option key={item.sub} value={item.sub}>
+                          {item.label}
+                        </option>
+                      ))}
+                    </select>
+                    <FieldError
+                      id="subCategory-error"
+                      message={errors.subCategory}
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {/* ── Images section ── */}
               <section className="space-y-4">
                 <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">
                   Images
