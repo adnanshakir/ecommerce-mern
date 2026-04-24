@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 
-const CartSummary = () => {
+const CartSummary = ({ razorpay }) => {
   const navigate = useNavigate();
   const subtotal = useSelector((state) => state.cart.subtotal);
 
@@ -23,6 +23,7 @@ const CartSummary = () => {
 
         <button
           type="button"
+          onClick={razorpay}
           className="w-1/2 bg-[var(--primary-btn)] py-3 text-sm text-[var(--card)]"
         >
           Checkout

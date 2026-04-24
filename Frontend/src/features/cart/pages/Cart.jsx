@@ -5,11 +5,39 @@ import Layout from "@/components/layout/Layout";
 import CartList from "@/features/cart/components/CartList";
 import CartSummary from "@/features/cart/components/CartSummary";
 import toast from "react-hot-toast";
+import { useRazorpay } from "react-razorpay";
 
 const Cart = () => {
   const items = useSelector((state) => state.cart.items);
-  const { handleGetCart, handleRemoveFromCart, handleUpdateCartQuantity } =
-    useCart();
+  const { error, isLoading, Razorpay } = useRazorpay();
+  const { handleGetCart, handleRemoveFromCart, handleUpdateCartQuantity } = useCart();
+
+  const handlePayment = () => {
+    const options = {
+      key: "YOUR_RAZORPAY_KEY",
+      amount: 50000, // Amount in paise
+      currency: "INR",
+      name: "Test Company",
+      description: "Test Transaction",
+      order_id: "order_9A33XWu170gUtm", // Generate order_id on server
+      handler: (response) => {
+        console.log(response);
+        alert("Payment Successful!");
+      },
+      prefill: {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        contact: "9999999999",
+      },
+      theme: {
+        color: "#F37254",
+      },
+    };
+
+    const razorpayInstance = new Razorpay(options);
+    razorpayInstance.open();
+  };
+
 
   useEffect(() => {
     handleGetCart().catch(() => {
@@ -71,7 +99,7 @@ const Cart = () => {
           onRemove={handleRemove}
         />
 
-        {items.length > 0 && <CartSummary />}
+        {items.length > 0 && <CartSummary razorpay={handlePayment} />}
       </section>
     </Layout>
   );
