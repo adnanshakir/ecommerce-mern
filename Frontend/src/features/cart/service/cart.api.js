@@ -58,3 +58,8 @@ export async function verifyPaymentOrder({
 
   return response.data;
 }
+
+export async function getPaymentByOrderId(orderId) {
+  const response = await cartApi.get(`/payment/${orderId}`);
+  return response.data;
+}

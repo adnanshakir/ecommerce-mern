@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/Select";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import ProductHighlights from "../components/ProductHighlights";
+import RelatedProducts from "../components/RelatedProducts";
 import { useCart } from "@/features/cart/hooks/useCart";
 import MiniCart from "@/features/cart/components/MiniCart";
 import toast from "react-hot-toast";
@@ -371,6 +372,13 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6">
+        <RelatedProducts
+          currentProductId={product._id}
+          category={product?.category}
+        />
       </section>
 
       <MiniCart open={cartOpen} onClose={() => setCartOpen(false)} />

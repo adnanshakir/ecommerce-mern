@@ -12,6 +12,7 @@ import {
   updateCartItemQuantity,
   createPaymentOrder,
   verifyPaymentOrder,
+  getPaymentByOrderId,
 } from "../controllers/cart.controller.js";
 
 const  router = express.Router();
@@ -83,5 +84,12 @@ router.post("/payment/create/order", authenticateUser, createPaymentOrder);
   *   - signature: Razorpay signature (body)
   */
 router.post("/payment/verify/order", authenticateUser, verifyPaymentOrder);
+
+/*
+ * @route GET /api/cart/payment/:orderId
+ * @desc Fetch a payment record by Razorpay order ID
+ * @access Private
+ */
+router.get("/payment/:orderId", authenticateUser, getPaymentByOrderId);
 
 export default router;

@@ -317,6 +317,7 @@ export const createPaymentOrder = async (req, res) => {
     return res.status(200).json({
       message: "Payment order created successfully",
       order,
+      paymentId: payment._id,
       subtotal,
       success: true,
     });
@@ -351,7 +352,7 @@ export const verifyPaymentOrder = async (req, res) => {
         order_id: orderId,
         payment_id: paymentId,
       },
-      signature, 
+      signature,
       config.RAZORPAY_KEY_SECRET,
     );
 
@@ -377,6 +378,36 @@ export const verifyPaymentOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Error verifying payment:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+export const getPaymentByOrderId = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const payment = await paymentModel.findOne({
+      "razorpay.orderId": orderId,
+      userId: req.user._id,
+    });
+
+    if (!payment) {
+      return res.status(404).json({
+        message: "Order not found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      payment,
+    });
+  } catch (error) {
+    console.error("Error fetching payment by orderId:", error);
 
     return res.status(500).json({
       message: "Internal server error",

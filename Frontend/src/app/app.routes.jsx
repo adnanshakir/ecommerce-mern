@@ -42,7 +42,7 @@ export const routes = createBrowserRouter([
     ),
   },
   {
-    path: "/orders-success?/:orderId",
+    path: "/orders-success/:orderId",
     element: (
       <Protected>
         <Order />

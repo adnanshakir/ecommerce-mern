@@ -4,6 +4,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import "./App.css";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const { handleGetMe } = useAuth();
@@ -18,7 +19,36 @@ const App = () => {
     }
   }, []);
 
-  return <RouterProvider router={routes} />;
+  return (
+    <>
+      <RouterProvider router={routes} />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "var(--card)",
+            color: "var(--text)",
+            border: "1px solid var(--border)",
+            borderRadius: "6px",
+            fontSize: "14px",
+          },
+          success: {
+            iconTheme: {
+              primary: "#22c55e",
+              secondary: "white",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "white",
+            },
+          },
+        }}
+      />
+    </>
+  );
 };
 
 export default App;

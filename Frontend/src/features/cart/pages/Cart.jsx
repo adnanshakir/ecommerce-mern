@@ -29,9 +29,9 @@ const Cart = () => {
       }
 
       const data = await handleCreatePaymentOrder();
-      console.log("PAYMENT RESPONSE:", data);
 
       const order = data.order;
+      const dbPaymentId = data.paymentId;
 
       if (!order?.amount) {
         console.error("Invalid order:", data);
@@ -46,13 +46,18 @@ const Cart = () => {
         name: "Yanited",
         description: "Test Transaction",
         order_id: order.id,
-        handler: (response) => {
-          const isValid = handleVerifyPaymentOrder(response);
+        handler: async (response) => {
+          try {
+            await handleVerifyPaymentOrder({
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
+              signature: response.razorpay_signature,
+              dbPaymentId,
+            });
 
-          if (isValid) {
             toast.success("Payment successful");
-            navigate("/orders-sucess?order" + order.id);
-          } else {
+            navigate(`/orders-success/${order.id}`);
+          } catch {
             toast.error("Payment verification failed");
           }
         },
@@ -62,7 +67,7 @@ const Cart = () => {
           contact: user?.contact,
         },
         theme: {
-          color: `var(--primary)`,
+          color: `var(--secondary)`,
         },
       };
 
