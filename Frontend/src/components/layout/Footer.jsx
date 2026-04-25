@@ -27,7 +27,7 @@ const Footer = () => {
       </div>
 
       <div className="pb-6 text-center text-xs text-[var(--text-muted)]">
-        © 2026 SNITCH
+        © 2026 Yanited
       </div>
     </footer>
   );

@@ -109,7 +109,7 @@ const Register = () => {
               <Store size={16} color="#fff" strokeWidth={2} />
             </div>
             <h1 className="text-lg font-bold tracking-widest uppercase text-(--text) leading-none">
-              SNITCH
+              Yanited
             </h1>
           </div>
 

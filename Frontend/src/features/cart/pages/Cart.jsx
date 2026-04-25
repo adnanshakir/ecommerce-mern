@@ -6,38 +6,73 @@ import CartList from "@/features/cart/components/CartList";
 import CartSummary from "@/features/cart/components/CartSummary";
 import toast from "react-hot-toast";
 import { useRazorpay } from "react-razorpay";
+import { useNavigate } from "react-router";
 
 const Cart = () => {
+  const navigate = useNavigate();
   const items = useSelector((state) => state.cart.items);
+  const user = useSelector((state) => state.auth.user);
   const { error, isLoading, Razorpay } = useRazorpay();
-  const { handleGetCart, handleRemoveFromCart, handleUpdateCartQuantity } = useCart();
+  const {
+    handleGetCart,
+    handleRemoveFromCart,
+    handleUpdateCartQuantity,
+    handleCreatePaymentOrder,
+    handleVerifyPaymentOrder,
+  } = useCart();
 
-  const handlePayment = () => {
-    const options = {
-      key: "YOUR_RAZORPAY_KEY",
-      amount: 50000, // Amount in paise
-      currency: "INR",
-      name: "Test Company",
-      description: "Test Transaction",
-      order_id: "order_9A33XWu170gUtm", // Generate order_id on server
-      handler: (response) => {
-        console.log(response);
-        alert("Payment Successful!");
-      },
-      prefill: {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        contact: "9999999999",
-      },
-      theme: {
-        color: "#F37254",
-      },
-    };
+  async function handleCheckout() {
+    try {
+      if (!Razorpay) {
+        toast.error("Payment SDK not loaded");
+        return;
+      }
 
-    const razorpayInstance = new Razorpay(options);
-    razorpayInstance.open();
-  };
+      const data = await handleCreatePaymentOrder();
+      console.log("PAYMENT RESPONSE:", data);
 
+      const order = data.order;
+
+      if (!order?.amount) {
+        console.error("Invalid order:", data);
+        toast.error("Payment init failed");
+        return;
+      }
+
+      const options = {
+        key: "rzp_test_ShNSkpxt3emQVJ",
+        amount: order.amount,
+        currency: order.currency,
+        name: "Yanited",
+        description: "Test Transaction",
+        order_id: order.id,
+        handler: (response) => {
+          const isValid = handleVerifyPaymentOrder(response);
+
+          if (isValid) {
+            toast.success("Payment successful");
+            navigate("/orders-sucess?order" + order.id);
+          } else {
+            toast.error("Payment verification failed");
+          }
+        },
+        prefill: {
+          name: user?.fullName,
+          email: user?.email,
+          contact: user?.contact,
+        },
+        theme: {
+          color: `var(--primary)`,
+        },
+      };
+
+      const razorpayInstance = new Razorpay(options);
+      razorpayInstance.open();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create payment order");
+    }
+  }
 
   useEffect(() => {
     handleGetCart().catch(() => {
@@ -99,7 +134,7 @@ const Cart = () => {
           onRemove={handleRemove}
         />
 
-        {items.length > 0 && <CartSummary razorpay={handlePayment} />}
+        {items.length > 0 && <CartSummary razorpay={handleCheckout} />}
       </section>
     </Layout>
   );

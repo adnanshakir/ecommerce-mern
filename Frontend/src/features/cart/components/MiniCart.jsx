@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const MiniCart = ({ open, onClose }) => {
+  const navigate = useNavigate();
   const items = useSelector((state) => state.cart.items);
   const subtotal = useSelector((state) => state.cart.subtotal);
 
@@ -99,6 +101,7 @@ const MiniCart = ({ open, onClose }) => {
           </Link>
 
           <button
+          onClick={()=> navigate("/cart")}
             type="button"
             className="w-full bg-[var(--primary-btn)] text-[var(--card)] py-2 text-sm"
           >

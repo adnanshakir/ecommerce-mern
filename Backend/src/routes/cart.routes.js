@@ -10,6 +10,8 @@ import {
   getCart,
   removeCartItem,
   updateCartItemQuantity,
+  createPaymentOrder,
+  verifyPaymentOrder,
 } from "../controllers/cart.controller.js";
 
 const  router = express.Router();
@@ -60,5 +62,26 @@ router.delete(
   validateRemoveCartItem,
   removeCartItem,
 );
+
+/*
+ * @route POST /api/cart/payment/create/order
+ * @desc Create payment order for cart
+ * @access Private
+ * @arguments:
+ *   - amount: Total amount to be paid (body)
+ *   - currency: Currency code (body, default "INR")
+ */
+router.post("/payment/create/order", authenticateUser, createPaymentOrder);
+
+/*
+  * @route POST /api/cart/payment/verify
+  * @desc Verify payment after completion
+  * @access Private
+  * @arguments:
+  *   - orderId: Razorpay order ID (body)
+  *   - paymentId: Razorpay payment ID (body)
+  *   - signature: Razorpay signature (body)
+  */
+router.post("/payment/verify/order", authenticateUser, verifyPaymentOrder);
 
 export default router;

@@ -3,6 +3,8 @@ import {
   getCartItems,
   removeCartItem,
   updateCartItemQuantity,
+  createPaymentOrder,
+  verifyPaymentOrder,
 } from "../service/cart.api";
 import { useDispatch } from "react-redux";
 import { setItems, setSubtotal } from "../state/cart.slice";
@@ -15,7 +17,12 @@ export const useCart = () => {
     dispatch(setSubtotal(Number(data?.subtotal) || 0));
   };
 
-  const validateAddToCartInput = ({ productId, quantity, size, requiresSize }) => {
+  const validateAddToCartInput = ({
+    productId,
+    quantity,
+    size,
+    requiresSize,
+  }) => {
     if (!productId) {
       throw new Error("Product is required");
     }
@@ -98,10 +105,42 @@ export const useCart = () => {
     }
   };
 
+  const handleCreatePaymentOrder = async () => {
+    try {
+      const data = await createPaymentOrder();
+      return data;
+    } catch (error) {
+      console.error("Failed to create payment order:", error);
+      throw error;
+    }
+  };
+
+  const handleVerifyPaymentOrder = async ({
+    orderId,
+    paymentId,
+    signature,
+    dbPaymentId,
+  }) => {
+    try {
+      const data = await verifyPaymentOrder({
+        orderId,
+        paymentId,
+        signature,
+        dbPaymentId,
+      });
+      return data;
+    } catch (error) {
+      console.error("Failed to verify payment order:", error);
+      throw error;
+    }
+  };
+
   return {
     handleAddToCart,
     handleGetCart,
     handleUpdateCartQuantity,
     handleRemoveFromCart,
+    handleCreatePaymentOrder,
+    handleVerifyPaymentOrder,
   };
 };

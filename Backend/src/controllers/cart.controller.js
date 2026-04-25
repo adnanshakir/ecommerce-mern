@@ -1,6 +1,10 @@
 import cartModel from "../models/cart.model.js";
 import productModel from "../models/product.model.js";
+import paymentModel from "../models/payment.model.js";
 import { stockOfVariant } from "../dao/product.dao.js";
+import { createOrder } from "../services/payment.service.js";
+import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils.js";
+import { config } from "../config/config.js";
 
 const buildCartPayload = async (userId) => {
   const cart = await cartModel
@@ -29,7 +33,8 @@ const buildCartPayload = async (userId) => {
 
   const subtotal = updatedItems.reduce(
     (acc, item) =>
-      acc + (item.currentPrice ?? item.price?.amount ?? 0) * (item.quantity || 0),
+      acc +
+      (item.currentPrice ?? item.price?.amount ?? 0) * (item.quantity || 0),
     0,
   );
 
@@ -251,6 +256,128 @@ export const removeCartItem = async (req, res) => {
     });
   } catch (error) {
     console.error("Error removing cart item:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+export const createPaymentOrder = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { cart, subtotal } = await buildCartPayload(userId);
+
+    if (!cart?.items?.length) {
+      return res.status(400).json({
+        message: "Cart is empty",
+        success: false,
+      });
+    }
+
+    if (!subtotal || subtotal <= 0) {
+      return res.status(400).json({
+        message: "Invalid cart total",
+        success: false,
+      });
+    }
+
+    const order = await createOrder({
+      amount: subtotal,
+      currency: "INR",
+    });
+
+    const currency = cart.items?.[0]?.price?.currency || "INR";
+
+    const payment = await paymentModel.create({
+      userId: req.user._id, // ✅ fixed
+      razorpay: {
+        orderId: order.id,
+      },
+      price: {
+        amount: subtotal,
+        currency,
+      },
+      orderItems: cart.items.map((item) => ({
+        title: item.product.name,
+        productId: item.product._id,
+        variantId: item.variant,
+        size: item.size,
+        quantity: item.quantity,
+        images: item.product.images?.[0] || { url: "" },
+        description: item.product.description || "",
+        price: {
+          amount: item.currentPrice || item.price.amount,
+          currency: item.price.currency,
+        },
+      })),
+    });
+
+    return res.status(200).json({
+      message: "Payment order created successfully",
+      order,
+      subtotal,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error creating payment order:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+export const verifyPaymentOrder = async (req, res) => {
+  const { orderId, paymentId, signature, dbPaymentId } = req.body;
+
+  try {
+    const payment = await paymentModel.findOne({
+      _id: dbPaymentId,
+      status: "pending",
+    });
+
+    if (!payment) {
+      return res.status(404).json({
+        message: "Payment record not found",
+        success: false,
+      });
+    }
+
+    const isValid = validatePaymentVerification(
+      {
+        order_id: orderId,
+        payment_id: paymentId,
+      },
+      signature, 
+      config.RAZORPAY_KEY_SECRET,
+    );
+
+    if (!isValid) {
+      payment.status = "failed";
+      await payment.save();
+
+      return res.status(400).json({
+        message: "Invalid payment signature",
+        success: false,
+      });
+    }
+
+    payment.status = "paid";
+    payment.razorpay.paymentId = paymentId;
+    payment.razorpay.signature = signature;
+
+    await payment.save();
+
+    return res.status(200).json({
+      message: "Payment verified successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error verifying payment:", error);
+
     return res.status(500).json({
       message: "Internal server error",
       success: false,

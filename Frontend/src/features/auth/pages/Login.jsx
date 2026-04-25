@@ -92,7 +92,7 @@ const Login = () => {
               <Store size={16} color="#fff" strokeWidth={2} />
             </div>
             <h1 className="text-lg font-bold tracking-widest uppercase text-(--text) leading-none">
-              SNITCH
+              Yanited
             </h1>
           </div>
           <p className="mt-1.5 text-[12px] text-[var(--text-muted)] font-normal tracking-normal">

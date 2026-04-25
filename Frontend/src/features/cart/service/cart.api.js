@@ -36,3 +36,25 @@ export async function removeCartItem({ itemId }) {
 
   return response.data;
 }
+
+export async function createPaymentOrder() {
+  const response = await cartApi.post("/payment/create/order");
+
+  return response.data;
+}
+
+export async function verifyPaymentOrder({
+  orderId,
+  paymentId,
+  signature,
+  dbPaymentId,
+}) {
+  const response = await cartApi.post("/payment/verify/order", {
+    orderId,
+    paymentId,
+    signature,
+    dbPaymentId,
+  });
+
+  return response.data;
+}

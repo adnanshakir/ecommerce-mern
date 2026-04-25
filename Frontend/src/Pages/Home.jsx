@@ -36,7 +36,7 @@ const Home = () => {
           {/* desktop */}
           <img
             src="https://images.unsplash.com/photo-1724184888128-a9967d0542ad?auto=format&fit=crop&w=1800&q=80"
-            alt="SNITCH hero"
+            alt="Yanited hero"
             className="absolute inset-0 h-full w-full object-cover object-[center_top]"
           />
         </picture>

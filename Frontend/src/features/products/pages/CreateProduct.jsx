@@ -56,7 +56,7 @@ const PageHeader = () => (
         <Store size={16} strokeWidth={2} className="text-[var(--card)]" />
       </div>
       <span className="text-lg font-bold tracking-widest uppercase text-(--text) leading-none">
-        SNITCH
+        Yanited
       </span>
     </div>
 

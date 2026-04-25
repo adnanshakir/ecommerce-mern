@@ -8,6 +8,8 @@ const requiredEnv = [
   "GOOGLE_CLIENT_SECRET",
   "NODE_ENV",
   "IMAGEKIT_PVT_KEY",
+  "RAZORPAY_KEY_ID",
+  "RAZORPAY_KEY_SECRET",
 ];
 
 requiredEnv.forEach((key) => {

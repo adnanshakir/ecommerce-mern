@@ -176,7 +176,7 @@ const Navbar = () => {
                 isActive ? "text-(--text)" : "text-white",
               ].join(" ")}
             >
-              SNITCH
+              Yanited
             </Link>
           </div>
 
