@@ -45,7 +45,7 @@ const RelatedProducts = ({ currentProductId, category, limit = 6 }) => {
   if (loading) {
     return (
       <section className="mt-16">
-        <h2 className="mb-6 text-center text-sm font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+        <h2 className="mb-6 text-center text-xl font-bold uppercase tracking-widest text-[var(--text-muted)]">
           You may also like
         </h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -68,7 +68,7 @@ const RelatedProducts = ({ currentProductId, category, limit = 6 }) => {
 
   return (
     <section className="mt-16">
-      <h2 className="mb-6 text-center text-sm font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+      <h2 className="mb-6 text-center text-xl font-bold uppercase tracking-widest text-[var(--text-muted)]">
         You may also like
       </h2>
 

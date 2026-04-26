@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { NAV_ITEMS } from "@/app/nav.config";
 import { searchProducts } from "@/features/products/services/product.api";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 /**
  * Mobile slide-in drawer.
@@ -10,6 +11,7 @@ import { searchProducts } from "@/features/products/services/product.api";
  */
 const MobileDrawer = ({ open, onClose, goToCategory, user }) => {
   const navigate = useNavigate();
+  const { handleLogout } = useAuth();
 
   /* ── Local mobile search state ── */
   const [query, setQuery] = useState("");
@@ -193,7 +195,24 @@ const MobileDrawer = ({ open, onClose, goToCategory, user }) => {
                     Dashboard
                   </Link>
                 )}
-                {!user && (
+                {user ? (
+                  <>
+                    <Link
+                      to="/orders"
+                      className="text-(--text)"
+                      onClick={handleClose}
+                    >
+                      Orders
+                    </Link>
+                    <button
+                      type="button"
+                      className="text-left text-(--text)"
+                      onClick={() => { handleClose(); handleLogout(navigate); }}
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
                   <>
                     <Link
                       to="/login"

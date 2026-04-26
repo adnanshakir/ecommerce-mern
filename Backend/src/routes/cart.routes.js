@@ -13,6 +13,7 @@ import {
   createPaymentOrder,
   verifyPaymentOrder,
   getPaymentByOrderId,
+  getUserPayments,
 } from "../controllers/cart.controller.js";
 
 const  router = express.Router();
@@ -84,6 +85,14 @@ router.post("/payment/create/order", authenticateUser, createPaymentOrder);
   *   - signature: Razorpay signature (body)
   */
 router.post("/payment/verify/order", authenticateUser, verifyPaymentOrder);
+
+/*
+ * @route GET /api/cart/payment/user
+ * @desc Fetch all paid orders for the logged-in user
+ * @access Private
+ * NOTE: must be declared BEFORE /payment/:orderId to avoid param collision
+ */
+router.get("/payment/user", authenticateUser, getUserPayments);
 
 /*
  * @route GET /api/cart/payment/:orderId

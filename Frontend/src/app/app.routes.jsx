@@ -10,7 +10,9 @@ import SellerProductDetail from "@/features/products/pages/SellerProductDetail";
 import Cart from "@/features/cart/pages/Cart";
 import Home from "@/Pages/Home";
 import Dashboard from "@/Pages/Dashboard";
-import Order from "@/features/cart/pages/Order";
+import Orders from "@/features/cart/pages/Orders";
+import OrderSuccess from "@/features/cart/pages/OrderSuccess";
+import OrderDetails from "@/features/cart/pages/OrderDetails";
 
 export const routes = createBrowserRouter([
   {
@@ -42,10 +44,22 @@ export const routes = createBrowserRouter([
     ),
   },
   {
-    path: "/orders-success/:orderId",
+    path: "/orders",
     element: (
       <Protected>
-        <Order />
+        <Orders />
+      </Protected>
+    ),
+  },
+  {
+    path: "/order-success/:orderId",
+    element: <OrderSuccess />,
+  },
+  {
+    path: "/orders/:orderId",
+    element: (
+      <Protected>
+        <OrderDetails />
       </Protected>
     ),
   },
@@ -72,3 +86,4 @@ export const routes = createBrowserRouter([
     ],
   },
 ]);
+

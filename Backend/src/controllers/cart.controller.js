@@ -372,6 +372,11 @@ export const verifyPaymentOrder = async (req, res) => {
 
     await payment.save();
 
+    await cartModel.findOneAndUpdate(
+      { userId: payment.userId },
+      { $set: { items: [] } }
+    );
+
     return res.status(200).json({
       message: "Payment verified successfully",
       success: true,
@@ -408,6 +413,26 @@ export const getPaymentByOrderId = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching payment by orderId:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+export const getUserPayments = async (req, res) => {
+  try {
+    const payments = await paymentModel
+      .find({ userId: req.user._id, status: "paid" })
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      payments,
+    });
+  } catch (error) {
+    console.error("Error fetching user payments:", error);
 
     return res.status(500).json({
       message: "Internal server error",

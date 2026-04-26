@@ -11,6 +11,7 @@ async function sendTokenResponse(user, res, message, redirectUrl = null) {
     httpOnly: true,
     sameSite: "lax",
     secure: false,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
   if (redirectUrl) {
@@ -134,4 +135,19 @@ export const getMe = async (req, res) => {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-}
+};
+
+export const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+    });
+
+    return res.status(200).json({ success: true, message: "Logged out" });
+  } catch (error) {
+    console.error("Error logging out user:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

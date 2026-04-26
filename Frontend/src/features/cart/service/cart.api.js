@@ -63,3 +63,8 @@ export async function getPaymentByOrderId(orderId) {
   const response = await cartApi.get(`/payment/${orderId}`);
   return response.data;
 }
+
+export async function getUserOrders() {
+  const response = await cartApi.get("/payment/user");
+  return response.data;
+}

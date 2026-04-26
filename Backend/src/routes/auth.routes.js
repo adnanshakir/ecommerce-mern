@@ -10,6 +10,7 @@ import {
   loginUser,
   googleAuthCallback,
   getMe,
+  logoutUser,
 } from "../controllers/auth.controller.js";
 import { authenticateUser } from "../middleware/auth.middleware.js";
 const router = Router();
@@ -61,5 +62,12 @@ router.get(
  * @access Private
  */
 router.get("/me", authenticateUser, getMe);
+
+/*
+ * @description Logout user — clears the auth cookie
+ * @route POST /api/auth/logout
+ * @access Public (no auth needed, cookie cleared regardless)
+ */
+router.post("/logout", logoutUser);
 
 export default router;

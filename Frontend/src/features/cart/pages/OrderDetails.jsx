@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import Layout from "@/components/layout/Layout";
-import { CheckCircle, ShoppingBag, ArrowRight, Package } from "lucide-react";
+import { Package, ArrowLeft, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { getPaymentByOrderId } from "../service/cart.api";
 
@@ -15,6 +15,8 @@ const formatDate = (iso) =>
         year: "numeric",
       })
     : "—";
+
+// ── Sub-components ─────────────────────────────────────────────────────────
 
 const StatusBadge = ({ status }) => {
   const map = {
@@ -34,23 +36,23 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-// ── Skeleton ───────────────────────────────────────────────────────────────
-
 const Skeleton = () => (
-  <section className="mx-auto w-full max-w-5xl animate-pulse space-y-5 px-4 py-10 sm:px-6">
-    <div className="flex flex-col items-center gap-3">
-      <div className="h-20 w-20 rounded-full bg-[var(--card-subtle)]" />
-      <div className="h-7 w-64 rounded bg-[var(--card-subtle)]" />
-      <div className="h-4 w-48 rounded bg-[var(--card-subtle)]" />
-    </div>
+  <section className="mx-auto w-full max-w-3xl animate-pulse space-y-5 px-4 py-10 sm:px-6">
+    <div className="h-6 w-24 rounded bg-[var(--card-subtle)]" />
     <div className="h-32 rounded-lg bg-[var(--card-subtle)]" />
-    <div className="h-40 rounded-lg bg-[var(--card-subtle)]" />
+    <div className="h-48 rounded-lg bg-[var(--card-subtle)]" />
+    <div className="h-16 rounded-lg bg-[var(--card-subtle)]" />
   </section>
 );
 
 // ── Main Component ─────────────────────────────────────────────────────────
 
-const Order = () => {
+/**
+ * Full order breakdown page accessed from /orders/:orderId.
+ * Shows all items, quantities, prices, and total.
+ * Products are clickable → /product/:id.
+ */
+const OrderDetails = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
 
@@ -74,7 +76,7 @@ const Order = () => {
       .finally(() => setLoading(false));
   }, [orderId]);
 
-  // ── Guards ──────────────────────────────────────────────────────────────
+  // ── Guards ─────────────────────────────────────────────────────────────
 
   if (!orderId) return null;
 
@@ -89,17 +91,17 @@ const Order = () => {
   if (notFound) {
     return (
       <Layout>
-        <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 px-4 py-20 text-center sm:px-6">
-          <Package size={48} className="text-[var(--text-muted)]" strokeWidth={1.2} />
+        <section className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-4 py-20 text-center sm:px-6">
+          <AlertCircle size={48} className="text-red-400" strokeWidth={1.2} />
           <h1 className="text-xl font-semibold text-(--text)">Order not found</h1>
           <p className="text-sm text-[var(--text-muted)]">
             We couldn&apos;t find an order for this ID.
           </p>
           <Button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/orders")}
             className="mt-2 bg-[var(--primary-btn)] text-[var(--card)]"
           >
-            Go Home
+            Back to Orders
           </Button>
         </section>
       </Layout>
@@ -111,34 +113,35 @@ const Order = () => {
 
   return (
     <Layout>
-      <section className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+      <section className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
 
-        {/* ── Header ──────────────────────────────────────────────────── */}
-        <div className="mb-10 flex flex-col items-center text-center">
-          <span className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-green-50 ring-8 ring-green-100">
-            <CheckCircle size={42} className="text-green-500" strokeWidth={1.6} />
-          </span>
-          <h1 className="text-2xl font-bold tracking-tight text-(--text) sm:text-3xl">
-            Order placed successfully
-          </h1>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            Thank you for your purchase! We&apos;re preparing your items.
-          </p>
-        </div>
+        {/* ── Back link ─────────────────────────────────────────────────── */}
+        <button
+          type="button"
+          onClick={() => navigate("/orders")}
+          className="mb-6 flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-(--text) transition"
+        >
+          <ArrowLeft size={15} />
+          Back to Orders
+        </button>
 
-        {/* ── Order Details Card ───────────────────────────────────────── */}
+        {/* ── Page title ────────────────────────────────────────────────── */}
+        <h1 className="mb-6 text-xl font-bold text-(--text)">Order Details</h1>
+
+        {/* ── Order meta card ───────────────────────────────────────────── */}
         <div className="mb-6 rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
           <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
-            Order Details
+            Summary
           </h2>
 
           <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
             <div>
               <p className="mb-0.5 text-[var(--text-muted)]">Order ID</p>
-              <p className="truncate font-medium text-(--text)" title={order?.razorpay?.orderId}>
-                <span className="font-mono text-xs">
-                  {order?.razorpay?.orderId ?? "—"}
-                </span>
+              <p
+                className="truncate font-mono text-xs font-medium text-(--text)"
+                title={order?.razorpay?.orderId}
+              >
+                {order?.razorpay?.orderId ?? "—"}
               </p>
             </div>
 
@@ -148,18 +151,20 @@ const Order = () => {
             </div>
 
             <div>
-              <p className="mb-0.5 text-[var(--text-muted)]">Payment</p>
+              <p className="mb-0.5 text-[var(--text-muted)]">Status</p>
               <StatusBadge status={order?.status} />
             </div>
 
             <div>
               <p className="mb-0.5 text-[var(--text-muted)]">Total</p>
-              <p className="font-semibold text-(--text)">₹{subtotal}</p>
+              <p className="font-semibold text-(--text)">
+                ₹{subtotal.toLocaleString("en-IN")}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* ── Order Items ──────────────────────────────────────────────── */}
+        {/* ── Items list ────────────────────────────────────────────────── */}
         {orderItems.length > 0 && (
           <div className="mb-6 rounded-lg border border-[var(--border)] bg-[var(--card)]">
             <h2 className="border-b border-[var(--border)] px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
@@ -176,7 +181,7 @@ const Order = () => {
                       : ""
                   }`}
                 >
-                  {/* Image */}
+                  {/* Product image — clickable */}
                   <button
                     type="button"
                     onClick={() =>
@@ -193,13 +198,13 @@ const Order = () => {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="flex h-24 w-20 items-center justify-center text-[10px] text-[var(--text-muted)]">
-                        No image
+                      <div className="flex h-24 w-20 items-center justify-center">
+                        <Package size={18} className="text-[var(--text-muted)]" />
                       </div>
                     )}
                   </button>
 
-                  {/* Details */}
+                  {/* Product details */}
                   <div className="flex flex-1 flex-col gap-1 text-sm">
                     <button
                       type="button"
@@ -214,12 +219,18 @@ const Order = () => {
                     <div className="flex flex-wrap gap-3 text-xs text-[var(--text-muted)]">
                       {item?.size && <span>Size: {item.size}</span>}
                       <span>Qty: {item?.quantity ?? 1}</span>
+                      <span>
+                        Unit price: ₹{(item?.price?.amount ?? 0).toLocaleString("en-IN")}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Price */}
+                  {/* Line total */}
                   <p className="shrink-0 text-sm font-semibold text-(--text)">
-                    ₹{((item?.price?.amount ?? 0) * (item?.quantity ?? 1)).toLocaleString("en-IN")}
+                    ₹
+                    {(
+                      (item?.price?.amount ?? 0) * (item?.quantity ?? 1)
+                    ).toLocaleString("en-IN")}
                   </p>
                 </li>
               ))}
@@ -227,7 +238,7 @@ const Order = () => {
 
             {/* Subtotal row */}
             <div className="flex justify-end border-t border-[var(--border)] px-5 py-3 text-sm">
-              <span className="text-[var(--text-muted)]">Subtotal&nbsp;</span>
+              <span className="text-[var(--text-muted)]">Total&nbsp;</span>
               <span className="font-semibold text-(--text)">
                 ₹{subtotal.toLocaleString("en-IN")}
               </span>
@@ -235,37 +246,15 @@ const Order = () => {
           </div>
         )}
 
-        {/* ── What's next banner ───────────────────────────────────────── */}
-        <div className="mb-8 flex items-start gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
-          <ShoppingBag
-            size={20}
-            className="mt-0.5 shrink-0 text-[var(--text-muted)]"
-          />
-          <div>
-            <p className="text-sm font-medium text-(--text)">What happens next?</p>
-            <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-              You&apos;ll receive a confirmation shortly. Your order will be
-              dispatched within 1–2 business days.
-            </p>
-          </div>
-        </div>
-
-        {/* ── Actions ─────────────────────────────────────────────────── */}
-        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Button
-            onClick={() => navigate("/")}
-            className="w-full bg-[var(--primary-btn)] text-[var(--card)] sm:w-auto"
-          >
-            Continue Shopping
-            <ArrowRight size={16} className="ml-1" />
-          </Button>
-
+        {/* ── Action ────────────────────────────────────────────────────── */}
+        <div className="flex justify-center">
           <Button
             variant="outline"
             onClick={() => navigate("/orders")}
             className="w-full sm:w-auto"
+            id="back-to-orders-btn"
           >
-            View Orders
+            Back to Orders
           </Button>
         </div>
 
@@ -274,4 +263,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default OrderDetails;

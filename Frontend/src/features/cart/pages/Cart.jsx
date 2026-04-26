@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useCart } from "../hooks/useCart";
 import Layout from "@/components/layout/Layout";
 import CartList from "@/features/cart/components/CartList";
@@ -7,9 +7,11 @@ import CartSummary from "@/features/cart/components/CartSummary";
 import toast from "react-hot-toast";
 import { useRazorpay } from "react-razorpay";
 import { useNavigate } from "react-router";
+import { setItems, setSubtotal } from "../state/cart.slice";
 
 const Cart = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const items = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.auth.user);
   const { error, isLoading, Razorpay } = useRazorpay();
@@ -55,8 +57,12 @@ const Cart = () => {
               dbPaymentId,
             });
 
+            
+            dispatch(setItems([]));
+            dispatch(setSubtotal(0));
+
             toast.success("Payment successful");
-            navigate(`/orders-success/${order.id}`);
+            navigate(`/order-success/${order.id}`);
           } catch {
             toast.error("Payment verification failed");
           }

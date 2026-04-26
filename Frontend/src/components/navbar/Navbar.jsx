@@ -7,12 +7,14 @@ import { NAV_ITEMS } from "@/app/nav.config";
 import { searchProducts } from "@/features/products/services/product.api";
 import MobileDrawer from "./MobileDrawer";
 import SearchOverlay from "./SearchOverlay";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === "/";
   const user = useSelector((state) => state.auth.user);
+  const { handleLogout } = useAuth();
 
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -212,7 +214,20 @@ const Navbar = () => {
                 <Link to="/cart" className={navLinkClass}>
                   Cart
                 </Link>
-                {!user && (
+                {user ? (
+                  <>
+                    <Link to="/orders" className={navLinkClass}>
+                      Orders
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleLogout(navigate)}
+                      className={navLinkClass}
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
                   <button
                     type="button"
                     onClick={() => navigate("/login")}
