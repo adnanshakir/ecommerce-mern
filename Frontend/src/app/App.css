@@ -89,9 +89,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Brand Typography ──────────────────────── */
-/* Manrope is used globally — no separate display class needed */
-
 /* ─── Register Card Entrance ───────────────── */
 @keyframes card-enter {
   from {
@@ -245,4 +242,28 @@ body {
   html {
     @apply font-sans;
   }
+}
+
+/* Chrome Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af transparent;
 }

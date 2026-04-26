@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import { Package, ArrowLeft, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { getPaymentByOrderId } from "../service/cart.api";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -35,15 +36,6 @@ const StatusBadge = ({ status }) => {
     </span>
   );
 };
-
-const Skeleton = () => (
-  <section className="mx-auto w-full max-w-3xl animate-pulse space-y-5 px-4 py-10 sm:px-6">
-    <div className="h-6 w-24 rounded bg-[var(--card-subtle)]" />
-    <div className="h-32 rounded-lg bg-[var(--card-subtle)]" />
-    <div className="h-48 rounded-lg bg-[var(--card-subtle)]" />
-    <div className="h-16 rounded-lg bg-[var(--card-subtle)]" />
-  </section>
-);
 
 // ── Main Component ─────────────────────────────────────────────────────────
 
@@ -83,7 +75,7 @@ const OrderDetails = () => {
   if (loading) {
     return (
       <Layout>
-        <Skeleton />
+        <PageSkeleton />
       </Layout>
     );
   }

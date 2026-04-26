@@ -17,6 +17,7 @@ import RelatedProducts from "../components/RelatedProducts";
 import { useCart } from "@/features/cart/hooks/useCart";
 import MiniCart from "@/features/cart/components/MiniCart";
 import toast from "react-hot-toast";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 
 const ProductDetail = () => {
   const { productId } = useParams();
@@ -97,9 +98,7 @@ const ProductDetail = () => {
   if (!product) {
     return (
       <Layout>
-        <div className="mx-auto w-full max-w-7xl">
-          <p className="text-sm text-[var(--text-muted)]">Loading product...</p>
-        </div>
+        <PageSkeleton />
       </Layout>
     );
   }

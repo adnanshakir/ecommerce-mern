@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/Button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { NAV_ITEMS } from "@/app/nav.config";
 import { searchProducts } from "@/features/products/services/product.api";
 import MobileDrawer from "./MobileDrawer";
@@ -125,7 +125,6 @@ const Navbar = () => {
       >
         <div className="mx-auto w-full max-w-7xl px-4 py-5 md:py-6 sm:px-6">
           <div className="grid grid-cols-3 items-center">
-
             {/* LEFT — mobile hamburger / desktop category nav */}
             <div className="flex items-center justify-start">
               {/* Hamburger (mobile) */}
@@ -139,7 +138,9 @@ const Navbar = () => {
                     ? "text-(--text) hover:bg-[var(--card-subtle)]"
                     : "text-white hover:bg-white/10",
                 ].join(" ")}
-                onClick={() => (mobileMenuOpen ? setMobileMenuOpen(false) : openMenu())}
+                onClick={() =>
+                  mobileMenuOpen ? setMobileMenuOpen(false) : openMenu()
+                }
                 aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -152,9 +153,15 @@ const Navbar = () => {
                     <button
                       type="button"
                       onClick={() => goToCategory(nav.category)}
-                      className={`${navLinkClass} pb-1`}
+                      className={`${navLinkClass} inline-flex items-center gap-1 cursor-pointer group`}
                     >
-                      {nav.label}
+                      <div className="flex items-center gap-1">
+                        <span>{nav.label}</span>
+                        <ChevronDown
+                          size={14}
+                          className="transition-transform duration-200 group-hover:rotate-180"
+                        />
+                      </div>
                     </button>
 
                     {/* Dropdown */}
@@ -208,7 +215,11 @@ const Navbar = () => {
                     Dashboard
                   </Link>
                 )}
-                <button type="button" onClick={openSearch} className={navLinkClass}>
+                <button
+                  type="button"
+                  onClick={openSearch}
+                  className={navLinkClass}
+                >
                   Search
                 </button>
                 <Link to="/cart" className={navLinkClass}>

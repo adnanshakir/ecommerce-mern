@@ -49,7 +49,7 @@ const Home = () => {
                 .getElementById("products")
                 ?.scrollIntoView({ behavior: "smooth" })
             }
-            className="mt-6 border border-white px-6 py-2 text-sm text-white transition-colors duration-200 hover:bg-white hover:text-black"
+            className="mt-6 border border-white px-6 py-2 text-sm text-white transition-colors duration-200 hover:bg-white hover:text-black hover:font-bold hover:rounded-xl cursor-pointer"
           >
             Shop
           </button>

@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router";
 import { getAllProducts } from "../services/product.api";
 import Layout from "@/components/layout/Layout";
 import { NAV_ITEMS } from "@/app/nav.config";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 
 const Products = () => {
   const [searchParams] = useSearchParams();
@@ -39,9 +40,7 @@ const Products = () => {
         </p>
         <h1 className="mb-8 text-xl font-bold text-(--text)">{heading}</h1>
 
-        {loading && (
-          <p className="text-sm text-[var(--text-muted)]">Loading...</p>
-        )}
+        {loading && <PageSkeleton />}
 
         {!loading && !products.length && (
           <div className="flex flex-col items-center justify-center py-20 text-center gap-3">

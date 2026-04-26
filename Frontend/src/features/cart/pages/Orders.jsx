@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import { getUserOrders } from "../service/cart.api";
 import { ShoppingBag, Package, ChevronRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -35,20 +36,8 @@ const StatusBadge = ({ status }) => {
 };
 
 // ── Skeletons ──────────────────────────────────────────────────────────────
+// Replaced with global PageSkeleton
 
-const SkeletonCard = () => (
-  <div className="animate-pulse rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
-    <div className="flex items-center justify-between gap-4">
-      <div className="space-y-2 flex-1">
-        <div className="h-3 w-32 rounded bg-[var(--card-subtle)]" />
-        <div className="h-3 w-20 rounded bg-[var(--card-subtle)]" />
-      </div>
-      <div className="h-6 w-16 rounded-full bg-[var(--card-subtle)]" />
-      <div className="h-4 w-20 rounded bg-[var(--card-subtle)]" />
-      <div className="h-8 w-24 rounded bg-[var(--card-subtle)]" />
-    </div>
-  </div>
-);
 
 // ── Order Card ─────────────────────────────────────────────────────────────
 
@@ -153,12 +142,7 @@ const Orders = () => {
   if (loading) {
     return (
       <Layout>
-        <section className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
-          <h1 className="mb-6 text-xl font-bold text-(--text)">Your Orders</h1>
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
-          </div>
-        </section>
+        <PageSkeleton />
       </Layout>
     );
   }

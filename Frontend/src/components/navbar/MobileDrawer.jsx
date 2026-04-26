@@ -143,9 +143,6 @@ const MobileDrawer = ({ open, onClose, goToCategory, user }) => {
           <div className="space-y-8 text-base font-semibold">
             {/* Config-driven category links */}
             <div className="space-y-4">
-              <p className="text-xs uppercase text-[var(--text-muted)] tracking-wide">
-                Shop
-              </p>
               <div className="flex flex-col gap-3">
                 {NAV_ITEMS.map((nav) => (
                   <div key={nav.category} className="space-y-2">
@@ -175,9 +172,6 @@ const MobileDrawer = ({ open, onClose, goToCategory, user }) => {
 
             {/* Navigation links */}
             <div className="space-y-4 border-t border-[var(--border)] pt-6">
-              <p className="text-xs uppercase tracking-wide text-[var(--text-muted)]">
-                Navigation
-              </p>
               <div className="flex flex-col gap-3">
                 <Link
                   to="/cart"

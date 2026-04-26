@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 
 /**
  * Protects a route behind authentication.
@@ -17,7 +18,7 @@ const Protected = ({ children, role = null }) => {
   const loading = useSelector((state) => state.auth.loading);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <PageSkeleton />;
   }
 
   if (!user) {
