@@ -1,20 +1,26 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Layout from "@/components/layout/Layout";
-import { useProduct } from "@/features/products/hooks/useProduct";
 import ProductCard from "@/features/products/components/ProductCard";
 import { Link } from "react-router-dom";
+import { getAllProducts } from "@/features/products/services/product.api";
 
 const Home = () => {
   const navigate = useNavigate();
-  const products = useSelector((state) => state.product.products);
-  const { handleGetAllProducts } = useProduct();
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    handleGetAllProducts().catch((error) => {
-      console.error("Failed to fetch products", error);
-    });
+    getAllProducts()
+      .then((data) => {
+        const sorted = (data.products || [])
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 6);
+
+        setProducts(sorted);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch products", error);
+      });
   }, []);
 
   return (
@@ -65,17 +71,27 @@ const Home = () => {
         </h2>
 
         {products?.length ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {products.map((product) => (
-              <Link
-                key={product._id}
-                to={`/product/${product._id}`}
-                className="block"
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {products.map((product) => (
+                <Link
+                  key={product._id}
+                  to={`/product/${product._id}`}
+                  className="block"
+                >
+                  <ProductCard product={product} />
+                </Link>
+              ))}
+            </div>
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={() => navigate("/products")}
+                className="border border-[var(--border)] px-6 py-2 text-sm text-(--text) hover:bg-[var(--card-subtle)] transition"
               >
-                <ProductCard product={product} />
-              </Link>
-            ))}
-          </div>
+                View All Products
+              </button>
+            </div>
+          </>
         ) : (
           <div className="mt-10 flex flex-col items-center justify-center space-y-3 text-center">
             <p className="text-sm text-[var(--text-muted)]">No products yet</p>

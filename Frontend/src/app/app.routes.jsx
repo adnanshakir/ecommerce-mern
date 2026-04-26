@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet } from "react-router";
 import Register from "../features/auth/pages/Register";
 import Login from "../features/auth/pages/Login";
 import CreateProduct from "../features/products/pages/CreateProduct";
-import Products from "../features/products/pages/Products";
+import AllProducts from "../features/products/pages/AllProducts";
 
 import Protected from "@/features/auth/components/Protected";
 import ProductDetail from "@/features/products/pages/ProductDetail";
@@ -29,7 +29,7 @@ export const routes = createBrowserRouter([
   },
   {
     path: "/products",
-    element: <Products />,
+    element: <AllProducts />,
   },
   {
     path: "/product/:productId",
