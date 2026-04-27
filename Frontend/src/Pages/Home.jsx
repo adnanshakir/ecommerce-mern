@@ -51,9 +51,7 @@ const Home = () => {
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6">
           <button
             onClick={() =>
-              document
-                .getElementById("products")
-                ?.scrollIntoView({ behavior: "smooth" })
+              navigate('/products')
             }
             className="mt-6 border border-white px-6 py-2 text-sm text-white transition-colors duration-200 hover:bg-white hover:text-black hover:font-bold hover:rounded-xl cursor-pointer"
           >

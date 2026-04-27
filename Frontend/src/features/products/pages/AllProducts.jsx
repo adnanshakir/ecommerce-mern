@@ -79,66 +79,45 @@ const AllProducts = () => {
               )}
             </div>
 
-            {/* Category */}
+            {/* Sub-categories */}
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-wider text-[var(--text-muted)]">
                 Category
               </p>
 
               <div className="flex gap-2 flex-wrap">
-                {NAV_ITEMS.map((nav) => {
-                  const cat = nav.category;
-                  const active = category === cat;
+                {NAV_ITEMS.flatMap((n) => n.items).map((item) => {
+                  const subCat = item.sub;
+                  const active = sub === subCat;
 
                   return (
                     <button
-                      key={cat}
+                      key={subCat}
                       onClick={() => {
-                        setCategory(active ? "" : cat);
-                        setSub("");
+                        if (active) {
+                          setSub("");
+                          setCategory("");
+                        } else {
+                          const parentNav = NAV_ITEMS.find((n) =>
+                            n.items.some((i) => i.sub === subCat)
+                          );
+                          setSub(subCat);
+                          if (parentNav) {
+                            setCategory(parentNav.category);
+                          }
+                        }
                       }}
                       className={[
-                        "px-3 py-1.5 text-xs capitalize rounded-md border transition-all duration-200",
+                        "px-3 py-1.5 text-xs capitalize border transition-all duration-200",
                         active
                           ? "bg-(--text) text-[var(--card)] border-(--text)"
                           : "border-[var(--border)] text-(--text) hover:bg-[var(--card-subtle)]",
                       ].join(" ")}
                     >
-                      {nav.label}
+                      {item.label}
                     </button>
                   );
                 })}
-              </div>
-            </div>
-
-            {/* Type (Sub-category) */}
-            <div className="space-y-2 pt-2">
-              <p className="text-xs uppercase tracking-wider text-[var(--text-muted)]">
-                Type
-              </p>
-
-              <div className="flex gap-2 flex-wrap">
-                {NAV_ITEMS.filter((n) => !category || n.category === category)
-                  .flatMap((n) => n.items)
-                  .map((item) => {
-                    const subCat = item.sub;
-                    const active = sub === subCat;
-
-                    return (
-                      <button
-                        key={subCat}
-                        onClick={() => setSub(active ? "" : subCat)}
-                        className={[
-                          "px-3 py-1.5 text-xs capitalize rounded-md border transition-all duration-200",
-                          active
-                            ? "bg-(--text) text-[var(--card)] border-(--text)"
-                            : "border-[var(--border)] text-(--text) hover:bg-[var(--card-subtle)]",
-                        ].join(" ")}
-                      >
-                        {item.label}
-                      </button>
-                    );
-                  })}
               </div>
             </div>
           </div>

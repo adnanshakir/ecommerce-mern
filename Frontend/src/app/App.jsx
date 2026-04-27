@@ -24,8 +24,11 @@ const App = () => {
       <RouterProvider router={routes} />
       <Toaster
         position="top-right"
+        containerStyle={{
+          top: "80px",
+        }}
         toastOptions={{
-          duration: 3000,
+          duration: 4000,
           style: {
             background: "var(--card)",
             color: "var(--text)",
