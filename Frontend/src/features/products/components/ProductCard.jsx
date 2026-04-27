@@ -13,7 +13,7 @@ const ProductCard = ({ product, onClick }) => {
       onClick={onClick}
       aria-label={`View ${name}`}
     >
-      <div className="relative aspect-3/4 object-center overflow-hidden bg-[var(--card-subtle)]">
+      <div className="relative aspect-[4/5] object-center overflow-hidden bg-[var(--card-subtle)]">
         {primaryImage ? (
           <>
             <img

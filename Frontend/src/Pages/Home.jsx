@@ -62,15 +62,15 @@ const Home = () => {
 
       <section
         id="products"
-        className="mx-auto w-full max-w-7xl px-4 py-20 text-center sm:px-6"
+        className="mx-auto w-full max-w-[1400px] px-2 sm:px-3 lg:px-4 py-20 text-center"
       >
-        <h2 className="mb-10 text-2xl font-medium tracking-tight text-(--text)">
+        <h2 className="mb-10 text-3xl font-bold tracking-tight text-(--text)">
           Latest Drops
         </h2>
 
         {products?.length ? (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mx-auto">
               {products.map((product) => (
                 <Link
                   key={product._id}

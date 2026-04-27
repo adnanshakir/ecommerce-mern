@@ -61,7 +61,7 @@ const Dashboard = () => {
             </header>
 
             {isLoading ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
                   <Card key={`skeleton-${index}`} className="bg-[var(--card)]">
                     <CardContent className="p-3 space-y-3">
@@ -90,7 +90,7 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sellerProducts.map((product) => (
                   <ProductCard
                     key={product._id}

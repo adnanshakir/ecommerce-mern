@@ -43,7 +43,7 @@ const AllProducts = () => {
 
   return (
     <Layout>
-      <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6">
+      <section className="mx-auto w-full max-w-[1400px] px-2 sm:px-3 lg:px-4 py-10">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <input
             type="text"
@@ -137,7 +137,7 @@ const AllProducts = () => {
         )}
 
         {!loading && products.length > 0 && (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => (
               <Link
                 key={product._id}
